@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}main{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+ <header>
+     <a type="image/jpeg" href="{% url 'main' %}"><img src="{% static 'image/booklib.jpg' %}" alt="Логотип приложения" class="logo"></a>
+    </header>
+<nav>
+    <a href="{% url 'main' %}"  class="button-link">Начальная страница</a>
+    <a href="{% url 'new_book' %}"  class="button-link">Регистрация книги</a>
+    <a href="{% url 'new_person' %}"  class="button-link">Регистрация читателя</a>
+    <a href="{% url 'give_book' %}"  class="button-link">Выдача книги</a>
+</nav>
+ <section>
+      {% block content %}
+      {% endblock %}
+    </section>
+</body>
+</html>

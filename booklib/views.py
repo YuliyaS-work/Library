@@ -1,0 +1,216 @@
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from datetime import date, datetime
+import uuid
+
+from .forms import PersonForm, BookForm
+from .models import Book, BookObj, FotoRegistr, Author, Order, Person, ReturnB
+
+
+def get_main_page(request):
+    '''Начальная страница.'''
+    books = Book.objects.prefetch_related('books', 'fotoregistr_set', 'author_set', 'genres').all()
+    context={'books':books}
+    return render(request, 'main_page.html', context)
+
+def get_new_book(request):
+    '''Регистрация новой книги.'''
+    formB = BookForm()
+    if request.method == 'POST':
+        formB = BookForm(request.POST, request.FILES)
+        if formB.is_valid():
+            title_rus = formB.cleaned_data['title_rus']
+            title_orig = formB.cleaned_data['title_orig']
+            name_genre = formB.cleaned_data['name_genre']
+            photo_book = formB.cleaned_data['photo_book']
+            name_authors = formB.cleaned_data['name_authors']
+            photo_author = formB.cleaned_data['photo_author']
+            year = formB.cleaned_data['year']
+            quantity_pages = formB.cleaned_data['quantity_pages']
+            registr_date = formB.cleaned_data['registr_date']
+            price = formB.cleaned_data['price']
+            price_per_day = formB.cleaned_data['price_per_day']
+            coefficient = formB.cleaned_data['coefficient']
+            space = formB.cleaned_data['space']
+
+            existing_book = Book.objects.filter(
+                title_rus=title_rus,
+                title_orig=title_orig,
+                year=year,
+                quantity_pages=quantity_pages
+            )
+            if existing_book.exists():
+                book = existing_book.first()
+                book_obj = BookObj.objects.create(
+                    book=book,
+                    registr_date=registr_date,
+                    price=price,
+                    price_per_day=price_per_day,
+                    coefficient=coefficient,
+                    space=space
+                )
+            else:
+                book = Book.objects.create(
+                    title_rus=title_rus,
+                    title_orig=title_orig,
+                    year=year,
+                    quantity_pages=quantity_pages
+                )
+                book.genres.set(name_genre)
+
+                book_obj = BookObj.objects.create(
+                    book=book,
+                    registr_date=registr_date,
+                    price=price,
+                    price_per_day=price_per_day,
+                    coefficient=coefficient,
+                    space=space
+                )
+                foto_registr = FotoRegistr.objects.create(
+                    books=book, photo_book=photo_book
+                )
+
+                author_spisok = []
+                for author in name_authors.split(','):
+                    author = author.strip()
+                    author_q, created = Author.objects.update_or_create(name=author, defaults={'photo_author':photo_author})
+                    author_spisok.append(author_q)
+                book.author_set.set(author_spisok)
+
+            book.update_general_quantity()
+            book.get_current_quantity()
+            book.save()
+            return redirect('/lib/')
+        else:
+            print(formB.errors)
+    context = {'formB':formB}
+    return render(request, 'add_book.html', context)
+
+
+def get_new_person(request):
+    '''Регистрация нового читателя.'''
+    formP = PersonForm()
+    if request.method == 'POST':
+        formP = PersonForm(request.POST)
+        if formP.is_valid():
+            formP.save()
+            return redirect('/lib/')
+        else:
+            print(formP.errors)
+
+    context = {'formP':formP}
+    return render(request, 'add_person.html', context)
+
+
+def give_book(request):
+    '''Выдача книги.'''
+    books = Book.objects.filter(current_quantity__gt=0)
+    persons = Person.objects.filter(quantity_books__lt=5)
+    if request.method == 'POST':
+        person_id = request.POST.get('person')
+        person = Person.objects.get(pk=person_id)
+        person.quantity_books += int(request.POST.get('quantity_books'))
+        person.save()
+
+        order = Order(
+            person = person,
+            quantity_books = request.POST.get('quantity_books'),
+            distrib_date = date.today(),
+            pre_return_date = datetime.strptime(request.POST.get('pre_return_date'),"%Y-%m-%d"),
+            pre_cost = request.POST.get('pre_cost'),
+            status_order = True
+        )
+        order.save()
+
+        book_list = []
+        for i in range(1,6):
+            try:
+                bookobj_registr_number = request.POST.get(f'bookobj_{i}')
+                registr_number = uuid.UUID(bookobj_registr_number)
+                bookobj = BookObj.objects.get(registr_number=registr_number)
+                bookobj.status_book = True
+                bookobj.save(update_fields = ['status_book'])
+                book_list.append(bookobj)
+
+                book_id = request.POST.get(f'book_{i}')
+                book = Book.objects.get(pk=book_id)
+                book.distrib_quantity += 1
+                book.get_current_quantity()
+                book.save(update_fields = ['distrib_quantity', 'current_quantity'])
+            except 	ValueError:
+                pass
+        order.book_obj.set(book_list)
+        order.save()
+
+        returnB = ReturnB(
+            order=order
+        )
+        returnB.save()
+
+    context = {'books':books, 'persons':persons}
+    return render(request, 'give_book.html', context)
+
+
+def get_bookobj(request):
+    '''Загружает физические экземпляры книги при выдаче. '''
+    book_id = request.GET.get('book_id')
+    print(f"Book_id: {book_id}")
+    bookobjs = BookObj.objects.filter(book_id=book_id, status_book=0)
+    data = []
+    for obj in bookobjs:
+        data.append({
+            "registr_number": obj.registr_number,
+            "price_per_day": float(obj.price_per_day)
+        })
+    return JsonResponse(data, safe=False)
+
+
+
+
+
+
+# def give_book(request):
+#     formO = OrderFrom()
+#     order= Order()
+#     if request.method == 'POST':
+#         formO = OrderFrom(request.POST)
+#         if 'data_order' in request.POST:
+#             if formO.is_valid():
+#                 cleaned_data = formO.cleaned_data
+#                 person = cleaned_data.get('person')
+#                 book1 = cleaned_data.get('book1')
+#                 book2 = cleaned_data.get('book2')
+#                 book3 = cleaned_data.get('book3')
+#                 book4 = cleaned_data.get('book4')
+#                 book5 = cleaned_data.get('book5')
+#                 quantity_books = cleaned_data.get('quantity_books')
+#                 pre_return_date = cleaned_data.get('pre_return_date')
+#                 distrib_date = cleaned_data.get('distrib_date')
+#                 order = Order(
+#                     person=person,
+#                     quantity_books=quantity_books,
+#                     pre_return_date=pre_return_date,
+#                     distrib_date=distrib_date
+#                 )
+#                 order.save()
+#                 books = [book1, book2, book3, book4, book5]
+#                 book_objs = []
+#                 for book in books:
+#                     if book != None:
+#                         book_obj = book.book_set.filter(status_book=False).first()
+#                         book_obj.status_book = True
+#                         book_obj.order_set = order
+#                         book_objs.append[book_obj]
+#                         book.distrib_quantity = book.distrib_quantity + 1
+#                         book.get_current_quantity()
+#                         book.save(update_fields=['distrib_quantity', 'current_quantity'])
+#                 order.book_obj = book_objs
+#                 order.get_pre_cost()
+#                 order.save(update_fields=['book_obj', 'pre_cost'])
+#             else:
+#                 print(formO.errors)
+#         if 'end_order' in request.POST:
+#             return redirect('/lib/')
+#
+#     context = {'formO':formO, 'order':order}
+#     return render(request, 'give_book.html', context)

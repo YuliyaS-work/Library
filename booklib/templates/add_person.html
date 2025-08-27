@@ -1,0 +1,11 @@
+{% extends 'basic.html' %}
+
+{% block title %}add_book{% endblock %}
+
+{% block content %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ formP.as_p }}
+        <input type="submit" value="Зарегистрировать" name="add_person">
+    </form>
+{% endblock %}

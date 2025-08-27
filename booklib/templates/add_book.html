@@ -1,0 +1,14 @@
+{% extends 'basic.html' %}
+
+
+{% block title %}add_book{% endblock %}
+
+{% block content %}
+
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ formB.as_p }}
+    <input type="submit" value="Зарегистрировать" name="add_book">
+</form>
+
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'basic.html' %}
+{% load static %}
+
+{% block title %}main{% endblock %}
+
+{% block content %}
+<div style="padding: 20px">
+<table id="myTable" class="display" >
+        <thead>
+            <tr>
+                <th>Фото книги</th>
+                <th>Название книги</th>
+                <th>Авторы</th>
+                <th>Жанры</th>
+                <th>Год</th>
+                <th>Общее количество</th>
+                <th>Доступное количество</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+                <td>{% for foto in book.fotoregistr_set.all %}{{ fotoregistr.foto_book }}<br> {% endfor %}</td>
+                <td>{{ book.title_rus }}</td>
+                <td>{% for author in book.author_set.all %}{{ author.name }}<br> {% endfor %}</td>
+                <td>{% for genre in book.genres.all %}{{ genre.name_genre }}<br>{% endfor %}</td>
+                <td>{{ book.year }}</td>
+                <td>{{ book.general_quantity }}</td>
+                <td>{{ book.current_quantity }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!--    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>-->
+<!--    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>-->
+    <script rsc="{% static 'js/main.js' %}">
+
+    </script>
+{% endblock %}
