@@ -30,13 +30,31 @@ class BookForm(forms.Form):
         label='Фото обложки',
         required=True
     )
-    name_authors = forms.CharField(
-        label='Авторы',
+    name_author1 = forms.CharField(
+        label='Автор1',
         required=True,
-        widget=forms.TextInput(attrs={'placeholder': 'Введите название книги(ориг.)'})
+        widget=forms.TextInput(attrs={'placeholder': 'Введите автора1'})
     )
-    photo_author = forms.ImageField(
-        label='Фото авторов',
+    photo_author1 = forms.ImageField(
+        label='Фото автора1',
+        required = False
+    )
+    name_author2 = forms.CharField(
+        label='Автор2',
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Введите автора2'})
+    )
+    photo_author2 = forms.ImageField(
+        label='Фото автора2',
+        required = False
+    )
+    name_author3 = forms.CharField(
+        label='Автор3',
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Введите автора3'})
+    )
+    photo_author3 = forms.ImageField(
+        label='Фото автора3',
         required = False
     )
     year = forms.IntegerField(
