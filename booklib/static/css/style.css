@@ -1,27 +1,88 @@
 header {
-    background: url('booklib.jpg') left/ auto 100% no-repeat;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;  /* центрируем по горизонтали */
+    align-items: center;      /* центрируем по вертикали */
+    height: 200px;
+    overflow: hidden;
 }
 
+
 .logo {
-    display: flex;
-    width: 300px;
-    height: auto;
+    max-height: 100%;  /* логотип не выше 200px */
+    max-width: 90%;    /* чтобы не упирался в края экрана */
+    height: auto;      /* сохраняем пропорции */
+    width: auto;
 }
 
 .button-link {
   display: inline-block;
-  padding: 10px 20px;
-  background-color: #C0C0C0;
-  color: black;
+  background-color: #708090;
+  padding: 12px 24px;
+  color: white;
   text-align: center;
   text-decoration: none;
   font-size: 16px;
   cursor: pointer;
+  border: none;
   border-radius: 5px;
+  transition: background-color 0.3s, transform 0.2s;
+  margin-right: 10px; /* отступ между кнопками */
+
 }
 
 .button-link:hover {
-  background-color: #808080;
+  background-color: #45799f;
+    transform: scale(1.05);
+}
+
+nav {
+    display: flex;
+    justify-content: center; /* центрируем горизонтально */
+    gap: 10px;               /* промежуток между кнопками */
+    margin: 20px 0;
+}
+
+.toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  background: #96B0D6;
+  color: white;
+  padding: 30px 50px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  opacity: 0;
+  pointer-events: none;
+  text-align: center;
+  font-size: 18px;
+  z-index: 999;
+}
+
+/* когда форма отправлена (через :target) */
+#toast:target {
+  animation: popupToast 3s forwards;
+}
+
+/* анимация: появляется, держится, исчезает */
+@keyframes popupToast {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
 }
 
 .errorlist {

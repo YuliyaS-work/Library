@@ -4,7 +4,7 @@
 {% block title %}Выдача книги{% endblock %}
 
 {% block content %}
-<form method="POST">
+<form  action="#toast" method="POST">
     {% csrf_token %}
     <br>
     <label for="person">Читатель</label>
@@ -25,6 +25,7 @@
     <select id="bookobj_{{ i }}" name="bookobj_{{ i }}" disable>
         <option value="">--номер--</option>
     </select><br><br>
+
     {% endfor %}
     <label for="quantity_books">Количество книг</label>
     <input id="quantity_books" name="quantity_books" value="" readonly><br><br>
@@ -34,6 +35,7 @@
     <input type="number" id="pre_cost" name="pre_cost" value="" step="any" readonly> <br><br>
     <input type="submit" valuer="Зарегистрировать" name="give_book">
 </form>
+<div id="toast" class="toast">Книга зарегистрирована</div>
 <script src="{% static 'js/formO.js' %}"></script>
 <script>
      const getBookObjUrl = "{% url 'get_bookobj' %}";

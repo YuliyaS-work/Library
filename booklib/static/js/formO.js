@@ -1,10 +1,46 @@
-const prices = {}; // глобальный объект для хранения цен по индексам
+// Функция для обновления всех списков книг, исключая выбранные
+function updateBookOptions() {
+    const allSelects = document.querySelectorAll('.book-select');
+    const selectedValues = Array.from(allSelects)
+        .map(s => s.value)
+        .filter(v => v !== '');
 
+    allSelects.forEach(function(select) {
+        const currentValue = select.value;
+        // Временный массив опций
+        const options = Array.from(select.options);
+        // Проверяем, есть ли уже опция "--Выберите книгу--"
+        const placeholderOption = select.querySelector('option[value=""]');
+
+        // Если нет, добавляем её
+        if (!placeholderOption) {
+            select.innerHTML = '<option value="">--Выберите книгу--</option>';
+        } else {
+            // Очищаем все, кроме этой опции
+            select.innerHTML = '';
+            select.appendChild(placeholderOption);
+        }
+        options.forEach(function(option) {
+            if (option.value === '' || option.value === currentValue) {
+                // добавляем текущий выбранный или пустой
+                select.appendChild(option);
+            } else if (!selectedValues.includes(option.value)) {
+                // добавляем только если не выбран в другом списке
+                select.appendChild(option);
+            }
+        });
+    });
+}
+
+const prices = {};
+
+// Обновляем обработчики для всех селектов
 document.querySelectorAll('.book-select').forEach(function(select) {
     select.addEventListener('change', function() {
         const selectedBookId = this.value;
         const index = this.id.split('_')[1];
         const subSelect = document.getElementById(`bookobj_${index}`);
+
         if (selectedBookId) {
             fetch(`${getBookObjUrl}?book_id=${selectedBookId}`)
                 .then(response => response.json())
@@ -20,12 +56,12 @@ document.querySelectorAll('.book-select').forEach(function(select) {
                         });
                         subSelect.disabled = false;
 
-                        // Берем цену первого варианта по умолчанию
+                        // по умолчанию выбираем первый
                         const firstOption = subSelect.options[0];
                         if (firstOption) {
                             subSelect.value = firstOption.value;
                             const pricePerDay = parseFloat(firstOption.getAttribute('data-price'));
-                            prices[index] = pricePerDay; // сохраняем цену
+                            prices[index] = pricePerDay;
                             updateCost();
                         }
                     } else {
@@ -34,17 +70,20 @@ document.querySelectorAll('.book-select').forEach(function(select) {
                         option.value = '';
                         subSelect.appendChild(option);
                         subSelect.disabled = true;
-                        delete prices[index]; // удаляем если нет подкласса
+                        delete prices[index];
                         updateCost();
                     }
                 });
         } else {
-            // Если ничего не выбрано
-            subSelect.innerHTML = '<option value="">--Выберите подкласс--</option>';
-            subSelect.disabled = true;
-            delete prices[index]; // удаляем из массива цен
+            // если ничего не выбрано
+            subSelect.innerHTML = '<option value="">--номер--</option>';
+            subSelect.disabled = false;
+            delete prices[index];
             updateCost();
         }
+
+        // Обновляем список книг, чтобы исключить выбранные
+        updateBookOptions();
     });
 });
 

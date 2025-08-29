@@ -19,19 +19,20 @@ def get_new_book(request):
     if request.method == 'POST':
         formB = BookForm(request.POST, request.FILES)
         if formB.is_valid():
-            title_rus = formB.cleaned_data['title_rus']
-            title_orig = formB.cleaned_data['title_orig']
-            name_genre = formB.cleaned_data['name_genre']
-            photo_book = formB.cleaned_data['photo_book']
-            name_authors = formB.cleaned_data['name_authors']
-            photo_author = formB.cleaned_data['photo_author']
-            year = formB.cleaned_data['year']
-            quantity_pages = formB.cleaned_data['quantity_pages']
-            registr_date = formB.cleaned_data['registr_date']
-            price = formB.cleaned_data['price']
-            price_per_day = formB.cleaned_data['price_per_day']
-            coefficient = formB.cleaned_data['coefficient']
-            space = formB.cleaned_data['space']
+            cleaned_data = formB.cleaned_data
+            title_rus = cleaned_data.get('title_rus')
+            title_orig = cleaned_data.get('title_orig')
+            name_genre = cleaned_data.get('name_genre')
+            photo_book = cleaned_data.get('photo_book')
+            name_authors = cleaned_data.get('name_authors')
+            photo_author = cleaned_data.get('photo_author')
+            year = cleaned_data.get('year')
+            quantity_pages = cleaned_data.get('quantity_pages')
+            registr_date = cleaned_data.get('registr_date')
+            price = cleaned_data.get('price')
+            price_per_day = cleaned_data.get('price_per_day')
+            coefficient = cleaned_data.get('coefficient')
+            space = cleaned_data.get('space')
 
             existing_book = Book.objects.filter(
                 title_rus=title_rus,
@@ -80,7 +81,7 @@ def get_new_book(request):
             book.update_general_quantity()
             book.get_current_quantity()
             book.save()
-            return redirect('/lib/')
+            return redirect('/lib/add_book/')
         else:
             print(formB.errors)
     context = {'formB':formB}
@@ -94,7 +95,7 @@ def get_new_person(request):
         formP = PersonForm(request.POST)
         if formP.is_valid():
             formP.save()
-            return redirect('/lib/')
+            return redirect('/lib/add_person')
         else:
             print(formP.errors)
 
@@ -163,9 +164,6 @@ def get_bookobj(request):
             "price_per_day": float(obj.price_per_day)
         })
     return JsonResponse(data, safe=False)
-
-
-
 
 
 

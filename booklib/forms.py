@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from django import forms
 
 from .models import Book, BookObj, Genre, Author, Person
@@ -14,11 +14,12 @@ class BookForm(forms.Form):
     )
     title_rus = forms.CharField(
         label='Наименование книги',
-        required=True
+        widget=forms.TextInput(attrs={'placeholder': 'Введите название книги'})
     )
     title_orig = forms.CharField(
         label='Наименование книги (ориг.)',
-        required=False
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Введите название книги(ориг.)'})
     )
     name_genre = forms.ModelMultipleChoiceField(
         label='Жанр',
@@ -32,6 +33,7 @@ class BookForm(forms.Form):
     name_authors = forms.CharField(
         label='Авторы',
         required=True,
+        widget=forms.TextInput(attrs={'placeholder': 'Введите название книги(ориг.)'})
     )
     photo_author = forms.ImageField(
         label='Фото авторов',
@@ -39,21 +41,43 @@ class BookForm(forms.Form):
     )
     year = forms.IntegerField(
         label='Год издания',
-        min_value=1,
-        required=False
+        max_value=date.today().year,
+        required=False,
+        error_messages={'invalid': 'Введите год в формате YYYY'},
+        widget = forms.NumberInput(attrs={
+            'pattern': r'\d{4}',
+            'title': 'Введите год в формате YYYY',
+            'placeholder': 'Введите год издания',
+            'step': '1',
+            'min': '1000',
+            'max': str(date.today().year)})
     )
     quantity_pages = forms.IntegerField(
         label='Количество страниц',
         required=False,
         min_value=0,
+        widget=forms.NumberInput(attrs={
+            'min': 1,
+            'placeholder': 'Введите количество страниц',
+            'style': 'width: 180px;'})
     )
     price = forms.DecimalField(
         label='Стоимость',
-        required=True
+        required=True,
+        widget=forms.NumberInput(attrs={
+            'step': '0.01',
+            'min': '0',
+            'placeholder': 'Введите стоимость книги',
+            'style': 'width: 160px;'})
     )
     price_per_day = forms.DecimalField(
         label='Цена за день',
-        required=True
+        required=True,
+        widget=forms.NumberInput(attrs={
+            'step': '0.01',
+            'min': '0',
+            'placeholder': 'Введите стоимость книги',
+            'style': 'width: 160px;'})
     )
     coefficient = forms.ChoiceField(
         label='Коэффициент',
@@ -65,11 +89,13 @@ class BookForm(forms.Form):
     registr_date = forms.DateField(
         label='Дата регистрации',
         required=True,
-        initial=date.today
+        initial=date.today(),
+        widget=forms.DateInput(attrs={'readonly': 'readonly'})
     )
     space = forms.CharField(
         label='Место хранения',
-        required=False
+        required=False,
+        widget=forms.TextInput(attrs={'placeholder': 'Введите место хранения'})
     )
 
 
@@ -78,63 +104,51 @@ class PersonForm(forms.ModelForm):
         model = Person
         fields = ('last_name', 'first_name', 'surname', 'date_of_birth',
                   'address', 'passport', 'mail', 'agreement')
-        widgets = {'date_of_birth': forms.DateInput(attrs={'type': 'date'})}
+        widgets = {
+            'last_name': forms.TextInput(
+                attrs={
+                    'type': 'text',
+                    'pattern': '[A-Za-zА-Яа-яЁё -]+',
+                    'title': 'Можно использовать только буквы, пробелы и дефис',
+                    'placeholder': 'Введите фамилию'
+                }
+            ),
+            'first_name': forms.TextInput(
+                attrs={
+                    'type': 'text',
+                    'pattern': '[A-Za-zА-Яа-яЁё -]+',
+                    'title': 'Можно использовать только буквы, пробелы и дефис',
+                    'placeholder': 'Введите имя'
+                }
+            ),
+            'surname': forms.TextInput(
+                attrs={
+                    'type': 'text',
+                    'pattern': '[A-Za-zА-Яа-яЁё -]+',
+                    'title': 'Можно использовать только буквы, пробелы и дефис',
+                    'placeholder': 'Введите отчество'
+                }
+            ),
+            'date_of_birth': forms.DateInput(
+                attrs={
+                    'type': 'date'
+                }
+            ),
+            'address': forms.TextInput(
+                attrs={
+                    'placeholder': 'Введите адрес'
+                }
+            ),
+            'passport': forms.TextInput(
+                attrs={
+                    'placeholder': 'Введите паспортные данные'}
+            ),
+            'mail': forms.EmailInput(
+                attrs={
+                    'placeholder': 'Введите адрес электронной почты'
+                }
+            )
+        }
 
 
-class OrderFrom(forms.Form):
-    b_range = (
-        ('--', 'Выберите количество'),
-        (1, '1'),
-        (2, '2'),
-        (3, '3'),
-        (4, '4'),
-        (5, '5'),
-    )
-    person = forms.ModelChoiceField(
-        queryset=Person.objects.all(),
-        label='Получатель книги',
-        required=True
-    )
-    book1= forms.ModelChoiceField(
-        queryset=Book.objects.exclude(current_quantity=0),
-        label='Книги для выдачи',
-        required=True
-    )
-    book2 = forms.ModelChoiceField(
-        queryset=Book.objects.exclude(current_quantity=0),
-        label='Книги для выдачи',
-        required=False
-    )
-    book3 = forms.ModelChoiceField(
-        queryset=Book.objects.exclude(current_quantity=0),
-        label='Книги для выдачи',
-        required=False
-    )
-    book4 = forms.ModelChoiceField(
-        queryset=Book.objects.exclude(current_quantity=0),
-        label='Книги для выдачи',
-        required=False
-    )
-    book5 = forms.ModelChoiceField(
-        queryset=Book.objects.exclude(current_quantity=0),
-        label='Книги для выдачи',
-        required=False
-    )
-    quantity_books = forms.ChoiceField(
-        label='Количество выданных книг',
-        choices=b_range,
-        initial='--',
-        widget=forms.Select(),
-        required=True
-    )
-    pre_return_date = forms.DateField(
-        label='Дата возврата',
-        required=True,
-        widget=forms.DateInput(attrs={'type': 'date', 'class': 'required-field'})
-    )
-    distrib_date = forms.DateField(
-        label='Дата выдачи',
-        required=True,
-        initial=date.today
-    )
 

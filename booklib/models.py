@@ -189,17 +189,6 @@ class Order(models.Model):
     def __str__(self):
         return f'{self.person.last_name}'
 
-    # def get_pre_cost(self, days = 30):
-    #     '''Рассчитывает стоимость выданных книг.'''
-    #     summa = sum(book.price_per_day for book in self.book_obj.all())
-    #     quantity = self.quantity_books
-    #     if quantity <= 2:
-    #         self.cost = round(summa * days, 2)
-    #     elif 2 < quantity < 5:
-    #         self.cost = round(0.9 * summa * days, 2)  #вопрос к округлению (функция round(f, 2))
-    #     elif quantity == 5:
-    #         self.cost = round(0.85 * summa * days, 2)
-    #     return self.cost
 
     def get_penalty(self):
         self.penalty = 0.01 * self.pre_cost

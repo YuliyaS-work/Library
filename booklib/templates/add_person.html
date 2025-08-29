@@ -1,11 +1,14 @@
 {% extends 'basic.html' %}
 
-{% block title %}add_book{% endblock %}
+{% block title %}
+add_person
+{% endblock %}
 
 {% block content %}
-    <form action="" method="POST">
+    <form action="#toast" method="POST">
         {% csrf_token %}
         {{ formP.as_p }}
         <input type="submit" value="Зарегистрировать" name="add_person">
     </form>
+    <div id="toast" class="toast">Читатель зарегистрирован</div>
 {% endblock %}

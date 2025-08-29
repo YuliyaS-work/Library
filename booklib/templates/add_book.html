@@ -1,14 +1,26 @@
 {% extends 'basic.html' %}
 
 
-{% block title %}add_book{% endblock %}
+{% block title %}
+add_book
+{% endblock %}
 
 {% block content %}
-
-<form action="" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ formB.as_p }}
-    <input type="submit" value="Зарегистрировать" name="add_book">
-</form>
-
+<div>
+    <form action="#toast" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ formB.as_p }}
+        <input type="submit" value="Зарегистрировать" name="add_book">
+        {% if messages %}
+        <div class="messages" style="color: green">
+        {% for message in messages %}
+            <p class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+            </p>
+        {% endfor %}
+        </div>
+        {% endif %}
+    </form>
+</div>
+<div id="toast" class="toast">Книга зарегистрирована</div>
 {% endblock %}
