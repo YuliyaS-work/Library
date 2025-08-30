@@ -10,17 +10,12 @@ add_book
     <form action="#toast" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ formB.as_p }}
-        <input type="submit" value="Зарегистрировать" name="add_book">
-        {% if messages %}
-        <div class="messages" style="color: green">
-        {% for message in messages %}
-            <p class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-            {{ message }}
-            </p>
-        {% endfor %}
-        </div>
-        {% endif %}
+        <input type="submit" value="Зарегистрировать" name="add_book" class="button-submit">
     </form>
+    {% if formB.errors %}
+    {% else %}
+        <div id="toast" class="toast">Книга зарегистрирована</div>
+    {% endif %}
 </div>
-<div id="toast" class="toast">Книга зарегистрирована</div>
+
 {% endblock %}

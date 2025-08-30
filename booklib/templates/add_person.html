@@ -5,10 +5,15 @@ add_person
 {% endblock %}
 
 {% block content %}
+<div>
     <form action="#toast" method="POST">
         {% csrf_token %}
         {{ formP.as_p }}
-        <input type="submit" value="Зарегистрировать" name="add_person">
+        <input type="submit" value="Зарегистрировать" name="add_person" class="button-submit">
     </form>
-    <div id="toast" class="toast">Читатель зарегистрирован</div>
+    {% if formP.errors %}
+    {% else %}
+        <div id="toast" class="toast">Читатель зарегистрирован</div>
+    {% endif %}
+</div>
 {% endblock %}

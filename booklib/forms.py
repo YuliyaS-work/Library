@@ -2,6 +2,7 @@ from datetime import date, datetime
 from django import forms
 
 from .models import Book, BookObj, Genre, Author, Person
+from .validators import get_name
 
 
 class BookForm(forms.Form):
@@ -12,6 +13,8 @@ class BookForm(forms.Form):
         (0.4, 'неудовлетворительное'),
         (0.2, 'списание'),
     )
+    sp_years = [(str(y), str(y)) for y in range(date.today().year, 1000, -1)]
+
     title_rus = forms.CharField(
         label='Наименование книги',
         widget=forms.TextInput(attrs={'placeholder': 'Введите название книги'})
@@ -24,7 +27,8 @@ class BookForm(forms.Form):
     name_genre = forms.ModelMultipleChoiceField(
         label='Жанр',
         required=True,
-        queryset=Genre.objects.all()
+        queryset=Genre.objects.all(),
+        widget=forms.Select()
     )
     photo_book = forms.ImageField(
         label='Фото обложки',
@@ -33,6 +37,7 @@ class BookForm(forms.Form):
     name_author1 = forms.CharField(
         label='Автор1',
         required=True,
+        validators=[get_name],
         widget=forms.TextInput(attrs={'placeholder': 'Введите автора1'})
     )
     photo_author1 = forms.ImageField(
@@ -42,6 +47,7 @@ class BookForm(forms.Form):
     name_author2 = forms.CharField(
         label='Автор2',
         required=False,
+        validators=[get_name],
         widget=forms.TextInput(attrs={'placeholder': 'Введите автора2'})
     )
     photo_author2 = forms.ImageField(
@@ -51,24 +57,17 @@ class BookForm(forms.Form):
     name_author3 = forms.CharField(
         label='Автор3',
         required=False,
+        validators=[get_name],
         widget=forms.TextInput(attrs={'placeholder': 'Введите автора3'})
     )
     photo_author3 = forms.ImageField(
         label='Фото автора3',
         required = False
     )
-    year = forms.IntegerField(
+    year = forms.ChoiceField(
         label='Год издания',
-        max_value=date.today().year,
-        required=False,
-        error_messages={'invalid': 'Введите год в формате YYYY'},
-        widget = forms.NumberInput(attrs={
-            'pattern': r'\d{4}',
-            'title': 'Введите год в формате YYYY',
-            'placeholder': 'Введите год издания',
-            'step': '1',
-            'min': '1000',
-            'max': str(date.today().year)})
+        choices=sp_years,
+        widget=forms.Select()
     )
     quantity_pages = forms.IntegerField(
         label='Количество страниц',
@@ -122,6 +121,7 @@ class PersonForm(forms.ModelForm):
         model = Person
         fields = ('last_name', 'first_name', 'surname', 'date_of_birth',
                   'address', 'passport', 'mail', 'agreement')
+
         widgets = {
             'last_name': forms.TextInput(
                 attrs={
@@ -130,8 +130,7 @@ class PersonForm(forms.ModelForm):
                     'title': 'Можно использовать только буквы, пробелы и дефис',
                     'placeholder': 'Введите фамилию'
                 }
-            ),
-            'first_name': forms.TextInput(
+            ),'first_name': forms.TextInput(
                 attrs={
                     'type': 'text',
                     'pattern': '[A-Za-zА-Яа-яЁё -]+',

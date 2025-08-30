@@ -1,7 +1,8 @@
 from django.db import models
 import uuid
-
 from django.db.models import Sum
+
+from booklib.validators import get_name
 
 
 class Book(models.Model):
@@ -99,7 +100,7 @@ class Genre(models.Model):
 class Author(models.Model):
     '''Авторы книг.'''
     books = models.ManyToManyField(Book)
-    name = models.CharField('Автор', max_length=200)
+    name = models.CharField('Автор', max_length=200, validators =[get_name])
     photo_author = models.ImageField('Фото авторов', null=True, blank=True)
 
     class Meta:
@@ -138,9 +139,9 @@ class FotoStatus(models.Model):
 
 class Person(models.Model):
     ''' Читатели библиотеки.'''
-    last_name=models.CharField('Фамилия', max_length=50)
-    first_name=models.CharField('Имя', max_length=50)
-    surname=models.CharField('Отчество', max_length=50,null=True,blank=True)
+    last_name=models.CharField('Фамилия', max_length=50, validators =[get_name])
+    first_name=models.CharField('Имя', max_length=50, validators =[get_name])
+    surname=models.CharField('Отчество', max_length=50,null=True,blank=True, validators =[get_name])
     passport=models.CharField('Номер паспорта', max_length=50, null=True,blank=True, unique=True)
     date_of_birth=models.DateField('Дата рождения')
     address=models.CharField('Адрес проживания', max_length=200, null=True,blank=True)
