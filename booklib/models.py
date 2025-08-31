@@ -101,7 +101,7 @@ class Author(models.Model):
     '''Авторы книг.'''
     books = models.ManyToManyField(Book)
     name = models.CharField('Автор', max_length=200, validators =[get_name])
-    photo_author = models.ImageField('Фото авторов', null=True, blank=True)
+    photo_author = models.ImageField('Фото авторов', upload_to='photo_author/', null=True, blank=True)
 
     class Meta:
         verbose_name='Автор книги'
@@ -114,7 +114,7 @@ class Author(models.Model):
 class FotoRegistr(models.Model):
     '''Фото обложки книги.'''
     books = models.ForeignKey(Book, on_delete=models.PROTECT)
-    photo_book = models.ImageField('Фото обложки')
+    photo_book = models.ImageField('Фото обложки', upload_to='photo_book/')
 
     class Meta:
         verbose_name='Фотография обложки книги'
@@ -126,7 +126,7 @@ class FotoRegistr(models.Model):
 class FotoStatus(models.Model):
     '''Текущее состояние книги.'''
     book_obj = models.ForeignKey(BookObj, on_delete=models.PROTECT)
-    photo_status = models.ImageField('Фото состояния книги', null=True, blank=True)
+    photo_status = models.ImageField('Фото состояния книги', upload_to='photo_status/', null=True, blank=True)
     list_status = models.TextField('Описание', null=True, blank=True, max_length=1000)
 
     class Meta:

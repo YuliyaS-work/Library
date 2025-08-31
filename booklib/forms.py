@@ -28,7 +28,7 @@ class BookForm(forms.Form):
         label='Жанр',
         required=True,
         queryset=Genre.objects.all(),
-        widget=forms.Select()
+        widget=forms.SelectMultiple()
     )
     photo_book = forms.ImageField(
         label='Фото обложки',
@@ -92,7 +92,7 @@ class BookForm(forms.Form):
         required=True,
         widget=forms.NumberInput(attrs={
             'step': '0.01',
-            'min': '0',
+            'min': '0.01',
             'placeholder': 'Введите стоимость книги',
             'style': 'width: 160px;'})
     )

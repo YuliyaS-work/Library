@@ -69,6 +69,9 @@ form p select {
   width: 50%; /* например, чтобы поля растягивались */
 }
 
+
+
+
 .button-submit {
   width: 150px;
   background-color: #305070;
@@ -133,7 +136,6 @@ form p select {
 .errorlist {
     color: red;
 }
-
 
 table {
     border: 1px solid black;
