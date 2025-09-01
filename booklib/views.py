@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 import uuid
 
 from .forms import PersonForm, BookForm
@@ -111,6 +111,8 @@ def give_book(request):
     '''Выдача книги.'''
     books = Book.objects.filter(current_quantity__gt=0)
     persons = Person.objects.filter(quantity_books__lt=5)
+    pre_return_date = date.today() + timedelta(days=30)
+    pre_return_date_str = pre_return_date.strftime('%Y-%m-%d')
     if request.method == 'POST':
         person_id = request.POST.get('person')
         person = Person.objects.get(pk=person_id)
@@ -121,7 +123,8 @@ def give_book(request):
             person = person,
             quantity_books = request.POST.get('quantity_books'),
             distrib_date = date.today(),
-            pre_return_date = datetime.strptime(request.POST.get('pre_return_date'),"%Y-%m-%d"),
+            # pre_return_date = datetime.strptime(request.POST.get('pre_return_date'),"%Y-%m-%d"),
+            pre_return_date=pre_return_date_str,
             pre_cost = request.POST.get('pre_cost'),
             status_order = True
         )
@@ -152,7 +155,7 @@ def give_book(request):
         )
         returnB.save()
 
-    context = {'books':books, 'persons':persons}
+    context = {'books':books, 'persons':persons, 'pre_return_date':pre_return_date_str}
     return render(request, 'give_book.html', context)
 
 
