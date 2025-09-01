@@ -2,7 +2,7 @@ from datetime import date, datetime
 from django import forms
 
 from .models import Book, BookObj, Genre, Author, Person
-from .validators import get_name
+
 
 
 class BookForm(forms.Form):
@@ -37,7 +37,6 @@ class BookForm(forms.Form):
     name_author1 = forms.CharField(
         label='Автор1',
         required=True,
-        validators=[get_name],
         widget=forms.TextInput(attrs={'placeholder': 'Введите автора1'})
     )
     photo_author1 = forms.ImageField(
@@ -47,7 +46,6 @@ class BookForm(forms.Form):
     name_author2 = forms.CharField(
         label='Автор2',
         required=False,
-        validators=[get_name],
         widget=forms.TextInput(attrs={'placeholder': 'Введите автора2'})
     )
     photo_author2 = forms.ImageField(
@@ -57,7 +55,6 @@ class BookForm(forms.Form):
     name_author3 = forms.CharField(
         label='Автор3',
         required=False,
-        validators=[get_name],
         widget=forms.TextInput(attrs={'placeholder': 'Введите автора3'})
     )
     photo_author3 = forms.ImageField(
@@ -166,6 +163,3 @@ class PersonForm(forms.ModelForm):
                 }
             )
         }
-
-
-

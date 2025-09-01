@@ -1,8 +1,8 @@
+from django.core.validators import RegexValidator
 from django.db import models
 import uuid
 from django.db.models import Sum
 
-from booklib.validators import get_name
 
 
 class Book(models.Model):
@@ -59,7 +59,7 @@ class BookObj(models.Model):
         (0.2, 'списание'),
     )
     registr_number = models.UUIDField('Регистрационный номер', primary_key=True, default=uuid.uuid4, editable=False, max_length=8)
-    book = models.ForeignKey(Book, on_delete=models.PROTECT, verbose_name='Книга', related_name='books')
+    book = models.ForeignKey(Book, on_delete=models.PROTECT, verbose_name='Книга')
     registr_date = models.DateField('Дата регистрации', auto_now_add=True)
     price = models.DecimalField('Стоимость', max_digits=8, decimal_places=2)
     price_per_day = models.DecimalField('Цена за день', max_digits=5, decimal_places=2)
@@ -100,7 +100,7 @@ class Genre(models.Model):
 class Author(models.Model):
     '''Авторы книг.'''
     books = models.ManyToManyField(Book)
-    name = models.CharField('Автор', max_length=200, validators =[get_name])
+    name = models.CharField('Автор', max_length=200, validators =[RegexValidator(regex='^[A-Za-zА-Яа-яЁё]+$', message='Введите только буквы.', code='invalid_name')])
     photo_author = models.ImageField('Фото авторов', upload_to='photo_author/', null=True, blank=True)
 
     class Meta:
@@ -139,9 +139,9 @@ class FotoStatus(models.Model):
 
 class Person(models.Model):
     ''' Читатели библиотеки.'''
-    last_name=models.CharField('Фамилия', max_length=50, validators =[get_name])
-    first_name=models.CharField('Имя', max_length=50, validators =[get_name])
-    surname=models.CharField('Отчество', max_length=50,null=True,blank=True, validators =[get_name])
+    last_name=models.CharField('Фамилия', max_length=50,  validators =[RegexValidator(regex='^[A-Za-zА-Яа-яЁё]+$', message='Введите только буквы.', code='invalid_name')])
+    first_name=models.CharField('Имя', max_length=50,  validators =[RegexValidator(regex='^[A-Za-zА-Яа-яЁё]+$', message='Введите только буквы.', code='invalid_name')])
+    surname=models.CharField('Отчество', max_length=50,null=True,blank=True,  validators =[RegexValidator(regex='^[A-Za-zА-Яа-яЁё]+$', message='Введите только буквы.', code='invalid_name')])
     passport=models.CharField('Номер паспорта', max_length=50, null=True,blank=True, unique=True)
     date_of_birth=models.DateField('Дата рождения')
     address=models.CharField('Адрес проживания', max_length=200, null=True,blank=True)

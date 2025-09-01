@@ -6,7 +6,7 @@ add_book
 {% endblock %}
 
 {% block content %}
-<div>
+<div class="form-container">
     <form action="#toast" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ formB.as_p }}

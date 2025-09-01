@@ -5,7 +5,7 @@ add_person
 {% endblock %}
 
 {% block content %}
-<div>
+<div class="form-container">
     <form action="#toast" method="POST">
         {% csrf_token %}
         {{ formP.as_p }}

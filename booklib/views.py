@@ -9,7 +9,7 @@ from .models import Book, BookObj, FotoRegistr, Author, Order, Person, ReturnB
 
 def get_main_page(request):
     '''Начальная страница.'''
-    books = Book.objects.prefetch_related('books', 'fotoregistr_set', 'author_set', 'genres').all()
+    books = Book.objects.prefetch_related('bookobj_set', 'fotoregistr_set', 'author_set', 'genres').all()
     context={'books':books}
     return render(request, 'main_page.html', context)
 
@@ -84,7 +84,7 @@ def get_new_book(request):
 
             book.update_general_quantity()
             book.get_current_quantity()
-            book.save()
+            book.save(update_fields = ['general_quantity', 'current_quantity'])
             return redirect('/lib/add_book/')
         else:
             print(formB.errors)

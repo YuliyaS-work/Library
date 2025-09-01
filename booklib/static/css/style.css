@@ -1,15 +1,24 @@
-/* * {
+* {
     margin: 0;
     padding: 0;
-}*/
+}
+body {
+  overflow-x: auto;
+}
+.content {
+    width: 1200px; /* ширина больше ширины экрана, чтобы вызвать прокрутку */
+    padding: 20px;
+}
 
 header {
+    width: auto;
     background-color: #f0f0f0;
     display: flex;
     justify-content: center;  /* центрируем по горизонтали */
     align-items: center;      /* центрируем по вертикали */
     height: 200px;
     overflow: hidden;
+
 }
 
 .logo {
@@ -48,13 +57,13 @@ header {
 }
 
 .form-container {
-  width: 70%;
+  width: 60%;
   padding: 10px;
   float: left;
   font-size: 18px;
 }
 form p {
-  margin-bottom: 10px; /* расстояние между полями */
+  margin-bottom: 5px; /* расстояние между полями */
 }
 form p label {
   display: block; /* чтобы метка была на отдельной строке */
@@ -63,13 +72,11 @@ form p label {
 form p input,
 form p textarea {
   width: 50%; /* например, чтобы поля растягивались */
-  height: 30px;
+  height: 25px;
 }
 form p select {
   width: 50%; /* например, чтобы поля растягивались */
 }
-
-
 
 
 .button-submit {

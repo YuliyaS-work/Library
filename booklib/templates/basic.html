@@ -7,18 +7,21 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 </head>
 <body>
- <header>
-     <a type="image/jpeg" href="{% url 'main' %}"><img src="{% static 'image/logo.jpg' %}" alt="Логотип приложения" class="logo"></a>
- </header>
- <div class="button_container">
-    <a href="{% url 'main' %}"  class="button-link">Начальная страница</a><br>
-    <a href="{% url 'new_book' %}"  class="button-link">Регистрация книги</a><br>
-    <a href="{% url 'new_person' %}"  class="button-link">Регистрация читателя</a><br>
-    <a href="{% url 'give_book' %}"  class="button-link">Выдача книги</a><br>
- </div>
- <div class="form-container">
-      {% block content %}
-      {% endblock %}
- </div>
+
+        <header>
+            <a type="image/jpeg" href="{% url 'main' %}"><img src="{% static 'image/logo.jpg' %}" alt="Логотип приложения" class="logo"></a>
+        </header>
+ <div class="content">
+        <div class="button_container">
+            <a href="{% url 'main' %}"  class="button-link">Начальная страница</a><br>
+            <a href="{% url 'new_book' %}"  class="button-link">Регистрация книги</a><br>
+            <a href="{% url 'new_person' %}"  class="button-link">Регистрация читателя</a><br>
+            <a href="{% url 'give_book' %}"  class="button-link">Выдача книги</a><br>
+        </div>
+        <section>
+            {% block content %}
+            {% endblock %}
+        </section>
+    </div>
 </body>
 </html>
