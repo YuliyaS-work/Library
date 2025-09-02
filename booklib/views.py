@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from datetime import date, datetime, timedelta
 import uuid
 
-from .forms import PersonForm, BookForm
+from .forms import PersonForm, BookForm, GenreForm
 from .models import Book, BookObj, FotoRegistr, Author, Order, Person, ReturnB
 
 
@@ -17,78 +17,93 @@ def get_new_book(request):
     '''Регистрация новой книги.'''
     formB = BookForm()
     if request.method == 'POST':
-        formB = BookForm(request.POST, request.FILES)
-        if formB.is_valid():
-            cleaned_data = formB.cleaned_data
-            title_rus = cleaned_data.get('title_rus')
-            title_orig = cleaned_data.get('title_orig')
-            name_genre = cleaned_data.get('name_genre')
-            photo_book = cleaned_data.get('photo_book')
-            name_author1 = cleaned_data.get('name_author1')
-            photo_author1 = cleaned_data.get('photo_author1')
-            name_author2 = cleaned_data.get('name_author2')
-            photo_author2 = cleaned_data.get('photo_author2')
-            name_author3 = cleaned_data.get('name_author3')
-            photo_author3 = cleaned_data.get('photo_author3')
-            year = cleaned_data.get('year')
-            quantity_pages = cleaned_data.get('quantity_pages')
-            registr_date = cleaned_data.get('registr_date')
-            price = cleaned_data.get('price')
-            price_per_day = cleaned_data.get('price_per_day')
-            coefficient = cleaned_data.get('coefficient')
-            space = cleaned_data.get('space')
+        if 'add_book' in request.POST:
+            formB = BookForm(request.POST, request.FILES)
+            if formB.is_valid():
+                cleaned_data = formB.cleaned_data
+                title_rus = cleaned_data.get('title_rus')
+                title_orig = cleaned_data.get('title_orig')
+                name_genre = cleaned_data.get('name_genre')
+                photo_book = cleaned_data.get('photo_book')
+                name_author1 = cleaned_data.get('name_author1')
+                photo_author1 = cleaned_data.get('photo_author1')
+                name_author2 = cleaned_data.get('name_author2')
+                photo_author2 = cleaned_data.get('photo_author2')
+                name_author3 = cleaned_data.get('name_author3')
+                photo_author3 = cleaned_data.get('photo_author3')
+                year = cleaned_data.get('year')
+                quantity_pages = cleaned_data.get('quantity_pages')
+                registr_date = cleaned_data.get('registr_date')
+                price = cleaned_data.get('price')
+                price_per_day = cleaned_data.get('price_per_day')
+                coefficient = cleaned_data.get('coefficient')
+                space = cleaned_data.get('space')
+                quantity = cleaned_data.get('quantity')
 
-            existing_book = Book.objects.filter(
-                title_rus=title_rus,
-                title_orig=title_orig,
-                year=year,
-                quantity_pages=quantity_pages
-            )
-            if existing_book.exists():
-                book = existing_book.first()
-                book_obj = BookObj.objects.create(
-                    book=book,
-                    registr_date=registr_date,
-                    price=price,
-                    price_per_day=price_per_day,
-                    coefficient=coefficient,
-                    space=space
-                )
-            else:
-                book = Book.objects.create(
+
+                existing_book = Book.objects.filter(
                     title_rus=title_rus,
                     title_orig=title_orig,
                     year=year,
                     quantity_pages=quantity_pages
                 )
-                book.genres.set(name_genre)
+                for q in range( quantity):
+                    if existing_book.exists():
+                        book = existing_book.first()
+                        book_obj = BookObj.objects.create(
+                            book=book,
+                            registr_date=registr_date,
+                            price=price,
+                            price_per_day=price_per_day,
+                            coefficient=coefficient,
+                            space=space
+                        )
+                    else:
+                        book = Book.objects.create(
+                            title_rus=title_rus,
+                            title_orig=title_orig,
+                            year=year,
+                            quantity_pages=quantity_pages
+                        )
+                        book.genres.set(name_genre)
 
-                book_obj = BookObj.objects.create(
-                    book=book,
-                    registr_date=registr_date,
-                    price=price,
-                    price_per_day=price_per_day,
-                    coefficient=coefficient,
-                    space=space
-                )
-                foto_registr = FotoRegistr.objects.create(books=book, photo_book=photo_book)
+                        book_obj = BookObj.objects.create(
+                            book=book,
+                            registr_date=registr_date,
+                            price=price,
+                            price_per_day=price_per_day,
+                            coefficient=coefficient,
+                            space=space
+                        )
+                        foto_registr = FotoRegistr.objects.create(books=book, photo_book=photo_book)
 
-                author_spisok = []
-                author_spisok_name = [name_author1, name_author2, name_author3]
-                author_spisok_photo = [photo_author1, photo_author2, photo_author3]
-                for index, author in enumerate(author_spisok_name):
-                    author_q, created = Author.objects.update_or_create(name=author,
+                        author_spisok = []
+                        author_spisok_name = [name_author1, name_author2, name_author3]
+                        author_spisok_photo = [photo_author1, photo_author2, photo_author3]
+                        for index, author in enumerate(author_spisok_name):
+                            author_q, created = Author.objects.update_or_create(name=author,
                                                                         defaults={'photo_author': author_spisok_photo[index]})
-                    author_spisok.append(author_q)
-                book.author_set.set(author_spisok)
+                            author_spisok.append(author_q)
+                        book.author_set.set(author_spisok)
 
-            book.update_general_quantity()
-            book.get_current_quantity()
-            book.save(update_fields = ['general_quantity', 'current_quantity'])
-            return redirect('/lib/add_book/')
-        else:
-            print(formB.errors)
-    context = {'formB':formB}
+                    book.update_general_quantity()
+                    book.get_current_quantity()
+                    book.save(update_fields = ['general_quantity', 'current_quantity'])
+                return redirect('/lib/add_book/')
+            else:
+                print(formB.errors)
+
+    formG = GenreForm()
+    if request.method == 'POST':
+        formG = GenreForm(request.POST)
+        if 'add_genre' in request.POST:
+            if formG.is_valid():
+                formG.save()
+                return redirect('/lib/add_book/')
+            else:
+                print(formG.errors)
+
+    context = {'formB':formB, 'formG':formG}
     return render(request, 'add_book.html', context)
 
 
@@ -171,3 +186,7 @@ def get_bookobj(request):
             "price_per_day": float(obj.price_per_day)
         })
     return JsonResponse(data, safe=False)
+
+
+
+

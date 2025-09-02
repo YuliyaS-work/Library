@@ -87,7 +87,7 @@ class BookObj(models.Model):
 
 class Genre(models.Model):
     '''Жанры книг.'''
-    name_genre = models.CharField('Жанр', max_length=50)
+    name_genre = models.CharField('Жанр', max_length=50, validators =[RegexValidator(regex='^[A-Za-zА-Яа-яЁё]+$', message='Введите только буквы.', code='invalid_name')])
 
     class Meta:
         verbose_name='Жанр книги'

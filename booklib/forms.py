@@ -100,6 +100,11 @@ class BookForm(forms.Form):
         widget=forms.Select(),
         required=False
     )
+    quantity = forms.IntegerField(
+        label='Количество книг',
+        initial = 1,
+        widget=forms.NumberInput(attrs={'min':1, 'step':1, 'placeholder':'Введите количество книг'})
+    )
     registr_date = forms.DateField(
         label='Дата регистрации',
         required=True,
@@ -163,3 +168,9 @@ class PersonForm(forms.ModelForm):
                 }
             )
         }
+
+class GenreForm(forms.ModelForm):
+    class Meta:
+        model = Genre
+        fields = ['name_genre']
+        labels = {'name_genre': ''}

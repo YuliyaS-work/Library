@@ -32,10 +32,11 @@ class FotoStatusAdmin(admin.ModelAdmin):
     list_display = ('photo_status', 'list_status')
     search_fields = ('photo_status',)
 
-class OrderAdmin(admin.ModelAdmin):
-    list_display = ('distrib_date', 'quantity_books', 'status_order')
-    search_fields = ('distrib_date', 'status_order')
-    ordering = ('distrib_date', 'status_order')
+# class OrderAdmin(admin.ModelAdmin):
+#     pass
+    # list_display = ('distrib_date', 'quantity_books', 'status_order')
+    # search_fields = ('distrib_date', 'status_order')
+    # ordering = ('distrib_date', 'status_order')
 
 class ReturnBAdmin(admin.ModelAdmin):
     list_display = ('return_date', 'status_returnb', 'return_cost')
@@ -50,6 +51,6 @@ admin.site.register(Author, AuthorAdmin)
 admin.site.register(FotoRegistr, FotoRegistrAdmin)
 admin.site.register(FotoStatus, FotoStatusAdmin)
 admin.site.register(Person, PersonAdmin)
-admin.site.register(Order, OrderAdmin)
+admin.site.register(Order)
 admin.site.register(ReturnB, ReturnBAdmin)
 
