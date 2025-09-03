@@ -33,10 +33,6 @@ add_book
         {{ formG.as_p }}
         <input type="submit" value="Добавить" name="add_genre" class="button_submit">
     </form>
-    {% if formG.errors %}
-    {% else %}
-        <div id="toast1" class="toast">Жанр добавлен</div>
-    {% endif %}
 </div>
 
 {% endblock %}
