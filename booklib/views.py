@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from datetime import date, datetime, timedelta
 import uuid
 
-from .forms import PersonForm, BookForm, GenreForm
+from .forms import PersonForm, BookForm, GenreForm, ReturnForm1, ReturnForm2
 from .models import Book, BookObj, FotoRegistr, Author, Order, Person, ReturnB
 
 
@@ -187,6 +187,25 @@ def get_bookobj(request):
         })
     return JsonResponse(data, safe=False)
 
+def return_book(request):
+    formR1 = ReturnForm1()
+    book_list = []
+    if request.method == 'POST':
+        try:
+            if 'data_books' in request.POST:
+                formR1 = ReturnForm1(request.POST)
+                if formR1.is_valid():
+                    cleaned_data = formR1.cleaned_data
+                    order = cleaned_data.get('order')
+                    bookobjs_order =order.book_obj.filter(status_book=True)
+                    book_list=[BookObj.objects.filter(pk=b.pk) for b in bookobjs_order]
+        except AttributeError:
+            return redirect('/lib/return_book/')
+
+    formR2 = ReturnForm2(book_list=book_list)
+    # if request.method == 'POST':
 
 
 
+    context = {'formR1': formR1, 'formR2': formR2}
+    return render(request, 'return.html', context)

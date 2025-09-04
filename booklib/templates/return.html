@@ -1,0 +1,30 @@
+{% extends 'basic.html' %}
+{% load static %}
+
+{% block title %}
+Возврат книг
+{% endblock %}
+
+{% block content %}
+<div  class="form-container-book">
+    <form action="" method="POST">
+    {% csrf_token %}
+    {{formR1.as_p}}
+    <input type="submit" name="data_books" class="button-submit" value="Загрузить книги">
+</form>
+
+<form action="toast" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{formR2.as_p}}
+    <input type="submit" name="calculate" class="button-submit" value="Рассчитать">
+
+    {% if formB.errors %}
+    {% else %}
+        <div id="toast" class="toast">Книга зарегистрирована</div>
+    {% endif %}
+</form>
+
+<input type="submit" name="return" class="button-submit" value="Оформить возврат">
+</div>
+
+{% endblock %}

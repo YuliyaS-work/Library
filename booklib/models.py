@@ -188,7 +188,7 @@ class Order(models.Model):
         verbose_name_plural = 'Ордера'
 
     def __str__(self):
-        return f'{self.person.last_name}'
+        return f'{self.person.last_name} {self.person.date_of_birth}'
 
 
     def get_penalty(self):

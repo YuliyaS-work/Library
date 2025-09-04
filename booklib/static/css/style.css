@@ -30,6 +30,7 @@ header {
 
 .button_container {
   width: 20%;
+  height: 100%;
   padding: 20px;
   margin-left: 20px;
   float: left;
@@ -85,6 +86,8 @@ form p textarea {
 form p select {
   width: 50%; /* например, чтобы поля растягивались */
 }
+
+
 
 .genre {
   width: 15%;
