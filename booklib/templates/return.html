@@ -13,18 +13,18 @@
     <input type="submit" name="data_books" class="button-submit" value="Загрузить книги">
 </form>
 
-<form action="toast" method="POST" enctype="multipart/form-data">
+<form action="" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{formR2.as_p}}
-    <input type="submit" name="calculate" class="button-submit" value="Рассчитать">
-
-    {% if formB.errors %}
-    {% else %}
-        <div id="toast" class="toast">Книга зарегистрирована</div>
-    {% endif %}
+    <input type="submit" name="calculate" class="button-submit" value="Оформить возврат">
 </form>
+    <p>Стоимость возврата: </p><br>
+    <p>{% if return_cost == 0 %} {% else %}  {{ return_cost }} {% endif %}</p><br>
+    <form action="" method="POST">
+        {% csrf_token %}
+<input type="submit" name="return" class="button-submit" value="Завершить работу">
+</form >
 
-<input type="submit" name="return" class="button-submit" value="Оформить возврат">
 </div>
 
 {% endblock %}

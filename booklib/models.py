@@ -66,6 +66,8 @@ class BookObj(models.Model):
     coefficient = models.DecimalField('Коэффициент', max_digits=2, decimal_places=1, choices=coef, default=1, null=True, blank=True)
     space = models.CharField('Место хранения', max_length=200, null=True, blank=True)
     status_book = models.BooleanField('Статус книги', default=False)
+    return_order = models.ManyToManyField('ReturnB', verbose_name='Книги возврата', null=True, blank=True)
+    mark = models.BooleanField(default=False)
 
     class Meta:
         verbose_name='Экземпляр книги'
@@ -181,19 +183,16 @@ class Order(models.Model):
     quantity_books = models.PositiveIntegerField('Количество выданных книг', choices=b_range)
     debt_order = models.DecimalField('Задолженность по выдаче', max_digits=7, decimal_places=2, null=True,blank=True)
     status_order = models.BooleanField('Наличие задолженности', default=False)
-    penalty = models.DecimalField('Пеня за день', max_digits=5, decimal_places=2, null=True,blank=True)
+    discount = models.DecimalField('Скидка', max_digits=3, decimal_places=2, null=True,blank=True)
+    mark = models.BooleanField( default=False)
 
     class Meta:
         verbose_name = 'Ордер'
         verbose_name_plural = 'Ордера'
 
     def __str__(self):
-        return f'{self.person.last_name} {self.person.date_of_birth}'
+        return f'{self.person.last_name} {self.person.date_of_birth} {self.pk}'
 
-
-    def get_penalty(self):
-        self.penalty = 0.01 * self.pre_cost
-        return self.penalty
 
     def get_debt(self):
         self.debt_order = ReturnB.objects.filter(status_returnb=False).aggregate(debt=Sum('return_cost'))['debt']
@@ -201,10 +200,18 @@ class Order(models.Model):
 
 
 class ReturnB(models.Model):
+    b_range = (
+        (1, '1'),
+        (2, '2'),
+        (3, '3'),
+        (4, '4'),
+        (5, '5'),
+    )
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='Выдача')
     return_date = models.DateField('Дата возврата', auto_now=True, null=True,blank=True)
     return_cost = models.DecimalField('Стоимость возврата', max_digits=5, decimal_places=2, null=True,blank=True)
-    status_returnb = models.BooleanField('Наличие задолженности', default=False)
+    quantity_book = models.PositiveIntegerField('Количество выданных книг', choices=b_range, null=True,blank=True)
+    mark = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = 'Возврат'
@@ -213,31 +220,35 @@ class ReturnB(models.Model):
     def __str__(self):
         return f'{self.return_date}'
 
-    @property
-    def days(self):
-        '''Рассчитывает количество дней использования книги.'''
-        return  self.return_date - self.order.distrib_date
-
-    def get_return_cost(self, d=30):
-        quantity = self.order.quantity_books
-        price_per_day = self.order.book_obj.price_per_day
-        penalty_per_day = self.order.penalty
-        total_cost = price_per_day * self.days
-        total_pre_cost = price_per_day * d
-        if self.days <= 30:
-            if quantity <= 2:
-                self.return_cost = total_cost
-            elif 2 < quantity < 5:
-                self.return_cost = 0.9 * total_cost  # вопрос к округлению (функция round(f, 2))
-            elif quantity == 5:
-                self.return_cost = 0.85 * total_cost
-        elif 30 < self.days <= 120:
-            penalty = penalty_per_day * (self.days - 30)
-            if quantity <= 2:
-                self.return_cost = total_pre_cost + penalty
-            elif 2 < quantity < 5:
-                self.return_cost = 0.9 * total_pre_cost + penalty  # вопрос к округлению (функция round(f, 2))
-            elif quantity == 5:
-                self.return_cost = 0.85 * total_pre_cost * d + penalty
-        return self.return_cost
-
+    # @property
+    # def get_days(self):
+    #     '''Рассчитывает количество дней использования книги.'''
+    #     self.days_full = self.return_date - self.order.distrib_date
+    #     self.days = self.days_full.days
+    #     return self.days
+    #
+    # def get_penalty(self):
+    #     self.penalty = 0.01 * self.order.pre_cost
+    #     return self.penalty
+    #
+    # def get_return_cost(self, d=30):
+    #     quantity = self.quantity_book
+    #     price_per_day = self.order.book_obj.price_per_day
+    #     penalty_per_day = self.penalty
+    #     total_cost = price_per_day * quantity * self.days
+    #     total_pre_cost = price_per_day * d
+    #     if self.days <= 30:
+    #         pass
+    #         # sum(book.price_per_day for book in self.book_obj.all())
+    #
+    #         # self.return_cost = sum() * self.order.discount
+    #
+    #     elif 30 < self.days <= 120:
+    #         penalty = penalty_per_day * (self.days - 30)
+    #         if quantity <= 2:
+    #             self.return_cost = total_pre_cost + penalty
+    #         elif 2 < quantity < 5:
+    #             self.return_cost = 0.9 * total_pre_cost + penalty  # вопрос к округлению (функция round(f, 2))
+    #         elif quantity == 5:
+    #             self.return_cost = 0.85 * total_pre_cost * d + penalty
+    #     return self.return_cost

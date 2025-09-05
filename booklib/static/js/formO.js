@@ -108,4 +108,6 @@ function updateCost() {
     const totalCost=Math.round(sumPricesPerDay * days * discount *100)/100;
     document.getElementById('pre_cost').value=totalCost.toFixed(2);
     document.getElementById('quantity_books').value=quantityBooks;
+    document.getElementById('discount').value=discount;
+
 }

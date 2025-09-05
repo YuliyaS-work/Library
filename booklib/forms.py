@@ -1,4 +1,6 @@
 from datetime import date, datetime
+from email.policy import default
+
 from django import forms
 
 from .models import Book, BookObj, Genre, Author, Person, Order
@@ -184,6 +186,14 @@ class ReturnForm1(forms.Form):
 
 class ReturnForm2(forms.Form):
     def __init__(self, *args, **kwargs):
+        rating_book = (
+            (None, '--'),
+            (5, '5'),
+            (4, '4'),
+            (3, '3'),
+            (2, '2'),
+            (1, '1'),
+        )
         coef = (
             (1, 'отличное'),
             (0.8, 'хорошее'),
@@ -194,18 +204,19 @@ class ReturnForm2(forms.Form):
         book_list = kwargs.pop('book_list', None)
         super().__init__(*args, **kwargs)
         if book_list is not None:
-            for index, qs in enumerate(book_list):
+            book_l = list(book_list)
+            for index, qs in enumerate(book_l):
                 self.fields[f'book_objs_{index}'] = forms.ModelChoiceField(
                     label=f'Книга №{index + 1}',
                     queryset=qs,
-                    widget=forms.Select()
+                    widget=forms.Select(),
+                    required=False
                 )
                 self.fields[f'coefficient_{index}'] = forms.ChoiceField(
                     label='Коэффициент',
                     choices=coef,
-                    initial=1,
-                    widget=forms.Select(),
-                    required=False
+                    initial=qs.first().coefficient,
+                    widget=forms.Select()
                 )
                 self.fields[f'list_status_{index}'] = forms.CharField(
                     label='Состояние книги',
@@ -214,14 +225,17 @@ class ReturnForm2(forms.Form):
                         attrs={'placeholder': 'Описание книги', 'style': 'width:250px; height: 100px;'}),
                     required=False
                 )
-                self.fields[f'photo_status'] = forms.ImageField(
+                self.fields[f'photo_status_{index}'] = forms.ImageField(
                     label='Фото дефекта',
                     required=False
                 )
                 self.fields[f'rating_{index}'] = forms.ChoiceField(
                     label='Рейтинг',
                     required=False,
-                    choices=[(r,r) for r in range(1,6,1)]
+                    choices=rating_book,
+                    initial = None,
+                    widget = forms.Select()
+
                 )
 
     quantity_book = forms.ChoiceField(
@@ -234,3 +248,4 @@ class ReturnForm2(forms.Form):
         initial=date.today(),
         widget=forms.DateInput(attrs={'readonly': 'readonly'})
     )
+
