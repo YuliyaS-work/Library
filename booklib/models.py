@@ -63,10 +63,11 @@ class BookObj(models.Model):
     registr_date = models.DateField('Дата регистрации', auto_now_add=True)
     price = models.DecimalField('Стоимость', max_digits=8, decimal_places=2)
     price_per_day = models.DecimalField('Цена за день', max_digits=5, decimal_places=2)
+    current_day_price = models.DecimalField('Текущая цена за день', max_digits=5, decimal_places=2, null=True, blank=True)
     coefficient = models.DecimalField('Коэффициент', max_digits=2, decimal_places=1, choices=coef, default=1, null=True, blank=True)
     space = models.CharField('Место хранения', max_length=200, null=True, blank=True)
     status_book = models.BooleanField('Статус книги', default=False)
-    return_order = models.ManyToManyField('ReturnB', verbose_name='Книги возврата', null=True, blank=True)
+    return_order = models.ManyToManyField('ReturnB', verbose_name='Книги возврата')
     mark = models.BooleanField(default=False)
 
     class Meta:
@@ -76,10 +77,10 @@ class BookObj(models.Model):
     def __str__(self):
         return f'{self.book.title_rus} {self.registr_number}'
 
-    @property
-    def current_price_per_day(self):
-        '''Определяет стоимость книги за день.'''
-        return self.price_per_day * self.coefficient
+    # def get_current_day_price(self):
+    #     '''Определяет стоимость книги за день.'''
+    #     self.current_day_price = round(float(self.price_per_day) * self.coefficient, 2)
+    #     return self.current_day_price
 
     @property
     def current_final_price(self):

@@ -59,6 +59,10 @@ def get_new_book(request):
                             coefficient=coefficient,
                             space=space
                         )
+                        print(type(price_per_day))
+                        print(type(coefficient))
+                        book_obj.current_day_price = round(float(book_obj.coefficient) * float(book_obj.price_per_day), 2)
+                        book_obj.save(update_fields=['current_day_price'])
                     else:
                         book = Book.objects.create(
                             title_rus=title_rus,
@@ -66,6 +70,7 @@ def get_new_book(request):
                             year=year,
                             quantity_pages=quantity_pages
                         )
+
                         book.genres.set(name_genre)
 
                         book_obj = BookObj.objects.create(
@@ -76,6 +81,9 @@ def get_new_book(request):
                             coefficient=coefficient,
                             space=space
                         )
+                        book_obj.current_day_price = round(float(book_obj.coefficient) * float(book_obj.price_per_day), 2)
+                        book_obj.save(update_fields=['current_day_price'])
+
                         foto_registr = FotoRegistr.objects.create(books=book, photo_book=photo_book)
 
                         author_spisok = []
@@ -86,6 +94,7 @@ def get_new_book(request):
                                                                         defaults={'photo_author': author_spisok_photo[index]})
                             author_spisok.append(author_q)
                         book.author_set.set(author_spisok)
+
 
                     book.update_general_quantity()
                     book.get_current_quantity()
@@ -180,7 +189,7 @@ def get_bookobj(request):
     for obj in bookobjs:
         data.append({
             "registr_number": obj.registr_number,
-            "price_per_day": float(obj.price_per_day)
+            "price_per_day": float(obj.current_day_price)
         })
     return JsonResponse(data, safe=False)
 
@@ -288,7 +297,7 @@ def return_book(request):
                 # days = days_full.days
                 days = '30'
                 print(days)
-                summa = sum(book.price_per_day for book in returnB.bookobj_set.all())
+                summa = sum(book.current_day_price for book in returnB.bookobj_set.all())
                 print(summa)
                 print(returnB.order.discount)
                 if int(days)<=30:
@@ -300,6 +309,9 @@ def return_book(request):
                 print(return_cost)
                 returnB.return_cost = return_cost
                 returnB.save(update_fields=['return_cost'])
+                for book in bookobj_list:
+                    book.current_day_price = round(float(book.coefficient) * float(book.price_per_day), 2)
+                    book.save(update_fields=['current_day_price'])
 
             else:
                 print(formR2.errors)
