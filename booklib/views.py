@@ -176,6 +176,15 @@ def give_book(request):
         order.book_obj.set(book_list)
         order.save()
 
+        order.get_debt_order()
+        order.save(update_fields=['debt_order'])
+
+        person = order.person
+        person.get_debt()
+        person.save(update_fields=['debt'])
+
+
+
 
     context = {'books':books, 'persons':persons, 'pre_return_date':pre_return_date_str}
     return render(request, 'give_book.html', context)
@@ -303,7 +312,7 @@ def return_book(request):
                 if int(days)<=30:
                     return_cost = round(float(summa)*int(days)*float(returnB.order.discount), 2)
                 elif 30 < int(days) <= 120:
-                    penalty = round(float(summa)*float(returnB.order.discount) * (int(days) - 30),2)
+                    penalty = round(float(summa)*float(returnB.order.discount) * 1.01 * (int(days) - 30),2)
                     full_return_cost = round(float(summa)*30*float(returnB.order.discount), 2)
                     return_cost = full_return_cost + penalty
                 print(return_cost)
@@ -327,13 +336,20 @@ def return_book(request):
             print(type(order.returnb_set.aggregate(Sum('quantity_book'))['quantity_book__sum']))
             if order.quantity_books == order.returnb_set.aggregate(Sum('quantity_book'))['quantity_book__sum']:
                 order.status_order = False
-                order.save(update_fields=['status_order'])
+                order.debt_order = 0
+                order.save(update_fields=['status_order', 'debt_order'])
                 print(order.status_order)
 
             returnB.mark = False
-            returnB.save()
+            returnB.save(update_fields=['mark'])
+
             order.mark = False
-            order.save()
+            order.get_debt_order()
+            order.save(update_fields=['mark', 'debt_order'])
+
+            person = order.person
+            person.get_debt()
+            person.save(update_fields=['debt'])
         if 'return' in request.POST:
             return redirect('/lib/return_book/')
 

@@ -163,8 +163,9 @@ class Person(models.Model):
         return f'{self.last_name},{self.date_of_birth}, выдано {self.quantity_books} книг'
 
     def get_debt(self):
-        self.debt = ReturnB.objects.filter(status_returnb=False).aggregate(debt=Sum('debt_order'))['debt']
-        return self.debt_order
+        debt_sum = self.order_set.filter(status_order=True).aggregate(debt=Sum('debt_order'))['debt']
+        self.debt = debt_sum or 0
+        return self.debt
 
 
 class Order(models.Model):
@@ -195,8 +196,30 @@ class Order(models.Model):
         return f'{self.person.last_name} {self.person.date_of_birth} {self.pk}'
 
 
-    def get_debt(self):
-        self.debt_order = ReturnB.objects.filter(status_returnb=False).aggregate(debt=Sum('return_cost'))['debt']
+    def get_debt_order(self):
+        # days_use = date.today() - order.distrib_date
+        # days = days_use.days
+        days = '45'
+        books_return = []
+        for returnb in self.returnb_set.all():
+            spisok_books = list(returnb.bookobj_set.all())
+            for book in spisok_books:
+                books_return.append(book)
+        books = []
+        for book_order in self.book_obj.all():
+            if book_order in books_return:
+                pass
+            else:
+                books.append(book_order)
+        summa = sum(book.current_day_price for book in books)
+        if int(days) <= 30:
+            debt_order = round(float(summa) * int(days) * float(self.discount), 2)
+        elif 30 < int(days) <= 120:
+            penalty = round(float(summa) * float(self.discount) * 1.01 * (int(days) - 30), 2)
+            cost = round(float(summa) * 30 * float(self.discount), 2)
+            debt_order = cost + penalty
+            print(cost)
+        self.debt_order = debt_order
         return self.debt_order
 
 
@@ -221,35 +244,3 @@ class ReturnB(models.Model):
     def __str__(self):
         return f'{self.return_date}'
 
-    # @property
-    # def get_days(self):
-    #     '''Рассчитывает количество дней использования книги.'''
-    #     self.days_full = self.return_date - self.order.distrib_date
-    #     self.days = self.days_full.days
-    #     return self.days
-    #
-    # def get_penalty(self):
-    #     self.penalty = 0.01 * self.order.pre_cost
-    #     return self.penalty
-    #
-    # def get_return_cost(self, d=30):
-    #     quantity = self.quantity_book
-    #     price_per_day = self.order.book_obj.price_per_day
-    #     penalty_per_day = self.penalty
-    #     total_cost = price_per_day * quantity * self.days
-    #     total_pre_cost = price_per_day * d
-    #     if self.days <= 30:
-    #         pass
-    #         # sum(book.price_per_day for book in self.book_obj.all())
-    #
-    #         # self.return_cost = sum() * self.order.discount
-    #
-    #     elif 30 < self.days <= 120:
-    #         penalty = penalty_per_day * (self.days - 30)
-    #         if quantity <= 2:
-    #             self.return_cost = total_pre_cost + penalty
-    #         elif 2 < quantity < 5:
-    #             self.return_cost = 0.9 * total_pre_cost + penalty  # вопрос к округлению (функция round(f, 2))
-    #         elif quantity == 5:
-    #             self.return_cost = 0.85 * total_pre_cost * d + penalty
-    #     return self.return_cost
