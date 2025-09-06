@@ -14,10 +14,10 @@
  <div class="content">
         <div class="button_container">
             <a href="{% url 'main' %}"  class="button-link">Начальная страница</a><br>
-            <a href="{% url 'new_book' %}"  class="button-link">Регистрация книги</a><br>
-            <a href="{% url 'new_person' %}"  class="button-link">Регистрация читателя</a><br>
-            <a href="{% url 'give_book' %}"  class="button-link">Выдача книги</a><br>
-            <a href="{% url 'return_book' %}"  class="button-link">Возврат книги</a><br>
+            <a href="{% url 'new_book' %}"  class="button-link" >Регистрация книги</a><br>
+            <a href="{% url 'new_person' %}"  class="button-link" >Регистрация читателя</a><br>
+            <a href="{% url 'give_book' %}"  class="button-link" >Выдача книги</a><br>
+            <a href="{% url 'return_book' %}"  class="button-link" >Возврат книги</a><br>
         </div>
         <section>
             {% block content %}

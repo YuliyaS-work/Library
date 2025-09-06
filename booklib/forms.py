@@ -210,7 +210,7 @@ class ReturnForm2(forms.Form):
                     label=f'Книга №{index + 1}',
                     queryset=qs,
                     widget=forms.Select(),
-                    required=False
+                    required=(index == 0)
                 )
                 self.fields[f'coefficient_{index}'] = forms.ChoiceField(
                     label='Коэффициент',
