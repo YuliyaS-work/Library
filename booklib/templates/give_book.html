@@ -23,7 +23,7 @@
         {% endfor %}
     </select>
     <label for="bookobj_{{ i }}">Регистрационный номер</label>
-    <select id="bookobj_{{ i }}" name="bookobj_{{ i }}" disable>
+    <select id="bookobj_{{ i }}" name="bookobj_{{ i }}" disabled>
         <option value="">--номер--</option>
     </select><br><br>
 
@@ -36,11 +36,13 @@
     <input type="date" id="pre_return_date" name="pre_return_date" value="{{ pre_return_date }}" readonly><br><br>
     <label for="pre_cost" >Предварительная стоимость</label>
     <input type="number" id="pre_cost" name="pre_cost" value="" step="any" readonly> <br><br>
-    <input type="submit" valuer="Зарегистрировать" name="give_book" class="button-submit">
+    <input type="submit" value="Зарегистрировать" name="give_book" class="button-submit">
 </form>
 <div id="toast" class="toast">Выдача зарегистрирована</div>
 </div>
-<script src="{% static 'js/formO.js' %}"></script>
+
+
+<script src="{% static 'js/formO.js' %}" defer></script>
 <script>
      const getBookObjUrl = "{% url 'get_bookobj' %}";
 </script>

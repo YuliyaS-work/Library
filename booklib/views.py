@@ -173,7 +173,7 @@ def give_book(request):
                 book.distrib_quantity += 1
                 book.get_current_quantity()
                 book.save(update_fields = ['distrib_quantity', 'current_quantity'])
-            except 	ValueError:
+            except 	(ValueError, TypeError):
                 pass
         order.book_obj.set(book_list)
         order.save()
@@ -222,11 +222,11 @@ def return_book(request):
                 try:
                     order.mark = True
                     order.save()
-                    print(order.mark)
-                    print(order.id)
+                    # print(order.mark)
+                    # print(order.id)
                     bookobjs_order =order.book_obj.filter(status_book=True)
                     book_list=[BookObj.objects.filter(pk=b.pk) for b in bookobjs_order]
-                    print(book_list)
+                    # print(book_list)
                 except 	AttributeError:
                     return redirect('/lib/return_book/')
             else:
@@ -236,44 +236,44 @@ def return_book(request):
         order = Order.objects.filter(mark=True).first()
         # print(order.id)
         book_list=book_list
-        print(f'This {book_list}')
+        # print(f'This {book_list}')
 
         if 'calculate' in request.POST:
             try:
                 formR2 = ReturnForm2(request.POST, request.FILES, book_list=book_list)
                 if formR2.is_valid():
                     cleaned_data = formR2.cleaned_data
-                    print(cleaned_data)
+                    # print(cleaned_data)
                     for index in range(6):
                         book_obj = request.POST.get(f'book_objs_{index}')
-                        print(type(book_obj))
-                        print(book_obj)
+                        # print(type(book_obj))
+                        # print(book_obj)
                         if book_obj == '':
                             pass
                         else:
                             coefficient = request.POST.get(f'coefficient_{index}')
-                            print(coefficient)
+                            # print(coefficient)
                             list_status = request.POST.get(f'list_status_{index}')
                             photo_status = request.POST.get(f'photo_status_{index}')
                             return_rating = request.POST.get(f'rating_{index}')
 
                             bookobj = BookObj.objects.filter(pk=book_obj).first()
-                            print(bookobj)
+                            # print(bookobj)
                             if bookobj:
                                 bookobj.coefficient = coefficient
                                 bookobj.status_book = False
                                 bookobj.save(update_fields=['coefficient', 'status_book'])
-                                print(bookobj)
+                                # print(bookobj)
                                 bookobj_list.append(bookobj)
 
 
                                 foto_status = FotoStatus(book_obj=bookobj, list_status=list_status, photo_status=photo_status)
                                 foto_status.save()
-                                print(foto_status)
+                                # print(foto_status)
 
                                 if return_rating:
                                     bookobj.book.return_rating = return_rating
-                                    print(bookobj.book.return_rating)
+                                    # print(bookobj.book.return_rating)
                                     if bookobj.book.rating is None:
                                         bookobj.book.rating = 0
                                         bookobj.book.rating = int(return_rating)
@@ -283,42 +283,42 @@ def return_book(request):
                                     bookobj.book.counter_rating += 1
                                     bookobj.book.save(update_fields=['rating', 'counter_rating'])
                                 bookobj.book.distrib_quantity = bookobj.book.distrib_quantity - 1
-                                print(bookobj.book.distrib_quantity)
+                                # print(bookobj.book.distrib_quantity)
                                 bookobj.book.get_current_quantity()
-                                print(bookobj.book.current_quantity)
+                                # print(bookobj.book.current_quantity)
                                 bookobj.book.save(update_fields=['rating', 'distrib_quantity', 'current_quantity'])
-                                print(bookobj.book)
+                                # print(bookobj.book)
 
                     quantity_book = cleaned_data.get('quantity_book')
-                    print(quantity_book)
+                    # print(quantity_book)
                     return_date = cleaned_data.get('return_date')
                     returnB = ReturnB (order=order, return_date=return_date, quantity_book=quantity_book, mark=True)
                     returnB.save()
-                    print(returnB)
+                    # print(returnB)
 
                     order.person.quantity_books = order.person.quantity_books - int(quantity_book)
-                    print(order.person.quantity_books)
+                    # print(order.person.quantity_books)
                     order.person.save(update_fields=['quantity_books'])
-                    print(order.person.quantity_books)
+                    # print(order.person.quantity_books)
 
-                    print(bookobj_list)
+                    # print(bookobj_list)
                     returnB.bookobj_set.set(bookobj_list)
-                    print(returnB.bookobj_set.all())
+                    # print(returnB.bookobj_set.all())
 
                     days_full = return_date - returnB.order.distrib_date
-                    # days = days_full.days
-                    days = '30'
-                    print(days)
+                    days = days_full.days
+                    # days = '30'
+                    # print(days)
                     summa = sum(book.current_day_price for book in returnB.bookobj_set.all())
-                    print(summa)
-                    print(returnB.order.discount)
+                    # print(summa)
+                    # print(returnB.order.discount)
                     if int(days)<=30:
                         return_cost = round(float(summa)*int(days)*float(returnB.order.discount), 2)
                     elif 30 < int(days) <= 120:
                         penalty = round(float(summa)*float(returnB.order.discount) * 1.01 * (int(days) - 30),2)
                         full_return_cost = round(float(summa)*30*float(returnB.order.discount), 2)
                         return_cost = full_return_cost + penalty
-                    print(return_cost)
+                    # print(return_cost)
                     returnB.return_cost = return_cost
                     returnB.save(update_fields=['return_cost'])
                     for book in bookobj_list:
@@ -329,19 +329,19 @@ def return_book(request):
                     print(formR2.errors)
 
                 returnB = ReturnB.objects.filter(mark=True).first()
-                print(returnB)
+                # print(returnB)
                 cost = returnB.return_cost
-                print(cost)
+                # print(cost)
 
 
 
-                print(type(order.quantity_books))
-                print(type(order.returnb_set.aggregate(Sum('quantity_book'))['quantity_book__sum']))
+                # print(type(order.quantity_books))
+                # print(type(order.returnb_set.aggregate(Sum('quantity_book'))['quantity_book__sum']))
                 if order.quantity_books == order.returnb_set.aggregate(Sum('quantity_book'))['quantity_book__sum']:
                     order.status_order = False
                     order.debt_order = 0
                     order.save(update_fields=['status_order', 'debt_order'])
-                    print(order.status_order)
+                    # print(order.status_order)
 
                 returnB.mark = False
                 returnB.save(update_fields=['mark'])

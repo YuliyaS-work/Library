@@ -1,36 +1,61 @@
-// Функция для обновления всех списков книг, исключая выбранные
-function updateBookOptions() {
-    const allSelects = document.querySelectorAll('.book-select');
-    const selectedValues = Array.from(allSelects)
-        .map(s => s.value)
-        .filter(v => v !== '');
+document.addEventListener('DOMContentLoaded', () => {
+  const selects = Array.from(document.querySelectorAll('.book-select'));
 
-    allSelects.forEach(function(select) {
-        const currentValue = select.value;
-        // Временный массив опций
-        const options = Array.from(select.options);
-        // Проверяем, есть ли уже опция "--Выберите книгу--"
-        const placeholderOption = select.querySelector('option[value=""]');
+  // Сохраним все варианты для каждого селекта (чтобы не терять их)
+  const allOptions = selects.map(select => {
+    return Array.from(select.options).map(option => ({
+      value: option.value,
+      text: option.text,
+    }));
+  });
 
-        // Если нет, добавляем её
-        if (!placeholderOption) {
-            select.innerHTML = '<option value="">--Выберите книгу--</option>';
-        } else {
-            // Очищаем все, кроме этой опции
-            select.innerHTML = '';
-            select.appendChild(placeholderOption);
+  function updateSelects() {
+    // Собираем выбранные значения в предыдущих селектах
+    const selectedValues = [];
+
+    selects.forEach((select, index) => {
+      const currentValue = select.value;
+
+      // Формируем список значений, которые нельзя показывать в этом селекте
+      // Это все выбранные значения в предыдущих селектах
+      const disabledValues = selectedValues.slice();
+
+      // Обновляем опции селекта
+      select.innerHTML = ''; // очистить
+
+      // Добавляем опции из сохранённого списка, исключая disabledValues
+      allOptions[index].forEach(opt => {
+        // option с пустым value всегда показываем (placeholder)
+        if (opt.value === '' || !disabledValues.includes(opt.value)) {
+          const option = document.createElement('option');
+          option.value = opt.value;
+          option.text = opt.text;
+          select.appendChild(option);
         }
-        options.forEach(function(option) {
-            if (option.value === '' || option.value === currentValue) {
-                // добавляем текущий выбранный или пустой
-                select.appendChild(option);
-            } else if (!selectedValues.includes(option.value)) {
-                // добавляем только если не выбран в другом списке
-                select.appendChild(option);
-            }
-        });
+      });
+
+      // Восстанавливаем выбранное значение, если оно осталось в списке
+      if (currentValue && !disabledValues.includes(currentValue)) {
+        select.value = currentValue;
+      } else {
+        // Если выбранное значение теперь недоступно — сбрасываем выбор
+        select.value = '';
+      }
+
+      // Добавляем текущ выбор в список выбранных для следующих селектов
+      if (select.value) {
+        selectedValues.push(select.value);
+      }
     });
-}
+  }
+
+  // Навешиваем обработчики на все селекты
+  selects.forEach(select => {
+    select.addEventListener('change', updateSelects);
+  });
+
+
+});
 
 const prices = {};
 
@@ -83,7 +108,8 @@ document.querySelectorAll('.book-select').forEach(function(select) {
         }
 
         // Обновляем список книг, чтобы исключить выбранные
-        updateBookOptions();
+        // Инициализация
+        updateSelects();
     });
 });
 

@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.core.validators import RegexValidator
 from django.db import models
 import uuid
@@ -197,7 +199,7 @@ class Order(models.Model):
 
 
     def get_debt_order(self):
-        # days_use = date.today() - order.distrib_date
+        # days_use = date.today() - self.distrib_date
         # days = days_use.days
         days = '45'
         books_return = []
