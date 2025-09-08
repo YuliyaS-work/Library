@@ -195,7 +195,7 @@ class Order(models.Model):
         verbose_name_plural = 'Ордера'
 
     def __str__(self):
-        return f'{self.person.last_name} {self.person.date_of_birth} {self.pk}'
+        return f'{self.person.last_name} {self.person.date_of_birth}  номер выдачи {self.pk}'
 
 
     def get_debt_order(self):

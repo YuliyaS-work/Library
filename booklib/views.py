@@ -211,6 +211,7 @@ def return_book(request):
     cost = 0
     returnB = ReturnB()
     error = ''
+    orderID=''
 
     if request.method == 'POST':
 
@@ -220,10 +221,7 @@ def return_book(request):
                 cleaned_data = formR1.cleaned_data
                 order = cleaned_data.get('order')
                 try:
-                    order.mark = True
-                    order.save()
-                    # print(order.mark)
-                    # print(order.id)
+                    request.session['orderID']= order.id
                     bookobjs_order =order.book_obj.filter(status_book=True)
                     book_list=[BookObj.objects.filter(pk=b.pk) for b in bookobjs_order]
                     # print(book_list)
@@ -233,10 +231,12 @@ def return_book(request):
                 print(formR1.errors)
 
         formR2 = ReturnForm2(book_list=book_list)
-        order = Order.objects.filter(mark=True).first()
-        # print(order.id)
         book_list=book_list
         # print(f'This {book_list}')
+        orderID = request.session['orderID']
+        # print(orderID)
+        order = Order.objects.get(pk=orderID)
+        # print(order)
 
         if 'calculate' in request.POST:
             try:
@@ -346,9 +346,8 @@ def return_book(request):
                 returnB.mark = False
                 returnB.save(update_fields=['mark'])
 
-                order.mark = False
                 order.get_debt_order()
-                order.save(update_fields=['mark', 'debt_order'])
+                order.save(update_fields=['debt_order'])
 
                 person = order.person
                 person.get_debt()
@@ -361,13 +360,6 @@ def return_book(request):
             except AttributeError:
                 return redirect('/lib/return_book/')
 
-    # if request.method == 'GET':
-    #     order = Order.objects.filter(mark=True).first()
-    #     print(order)
-    #     if order:
-    #         order.mark = False
-    #         order.save(update_fields=['mark'])
-    #         print(order.mark)
 
     context = {'formR1': formR1, 'formR2': formR2, 'return_cost': cost, 'error': error}
     return render(request, 'return.html', context)
