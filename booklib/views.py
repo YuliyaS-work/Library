@@ -332,16 +332,16 @@ def return_book(request):
                 # print(returnB)
                 cost = returnB.return_cost
                 # print(cost)
-
-
-
+                #
+                #
+                #
                 # print(type(order.quantity_books))
                 # print(type(order.returnb_set.aggregate(Sum('quantity_book'))['quantity_book__sum']))
                 if order.quantity_books == order.returnb_set.aggregate(Sum('quantity_book'))['quantity_book__sum']:
                     order.status_order = False
                     order.debt_order = 0
                     order.save(update_fields=['status_order', 'debt_order'])
-                    # print(order.status_order)
+                    print(order.status_order)
 
                 returnB.mark = False
                 returnB.save(update_fields=['mark'])
