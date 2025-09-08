@@ -20,7 +20,7 @@
     <input type="submit" name="calculate" class="button-submit" value="Оформить возврат">
 </form>
     <p>Стоимость возврата: </p><br>
-    <p>{% if return_cost == 0 %} {% else %}  {{ return_cost }}BYN {% endif %}</p><br>
+    <p>{% if return_cost == 0 %} 0 BYN {% else %}  {{ return_cost }}BYN {% endif %}</p><br>
     <form action="" method="POST">
         {% csrf_token %}
 <input type="submit" name="return" class="button-submit" value="Завершить работу">
