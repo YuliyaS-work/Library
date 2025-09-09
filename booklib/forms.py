@@ -249,3 +249,13 @@ class ReturnForm2(forms.Form):
         widget=forms.DateInput(attrs={'readonly': 'readonly'})
     )
 
+
+class LoginForm(forms.Form):
+    username = forms.CharField(label='Логин')
+    password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
+
+
+class RegisterForm(forms.Form):
+    username = forms.CharField(label='Логин')
+    password1 = forms.CharField(label='Пароль1', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Пароль2', widget=forms.PasswordInput)

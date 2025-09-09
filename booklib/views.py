@@ -5,15 +5,32 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from datetime import date, datetime, timedelta
 import uuid
-
+import hashlib
+import os
+from .forms import LoginForm, RegisterForm
+from .models import Librarian
+from functools import wraps
 from .forms import PersonForm, BookForm, GenreForm, ReturnForm1, ReturnForm2
 from .models import Book, BookObj, FotoRegistr, Author, Order, Person, ReturnB, FotoStatus
 
 
+
+def librarian_login_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if request.session.get('librarian_id'):
+            return view_func(request, *args, **kwargs)
+        return redirect('login')
+    return wrapper
+
+@librarian_login_required
 def get_main_page(request):
     '''Начальная страница.'''
     books = Book.objects.prefetch_related('bookobj_set', 'fotoregistr_set', 'author_set', 'genres').all()
     context={'books':books}
+    if request.method == 'POST':
+        if 'logout_button' in request.POST:
+            request.session.flush()
+            return redirect('login')
     return render(request, 'main_page.html', context)
 
 def get_new_book(request):
@@ -363,3 +380,75 @@ def return_book(request):
 
     context = {'formR1': formR1, 'formR2': formR2, 'return_cost': cost, 'error': error}
     return render(request, 'return.html', context)
+
+
+
+def login_user(request):
+    error = ''
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+            username = cleaned_data.get('username')
+            password = cleaned_data.get('password')
+            librarian = Librarian.objects.filter(username=username).first()
+            def verify_password(stored_password, provided_password):
+                salt_hex = stored_password[:32]  # первые 32 символа — соль
+                hash_hex = stored_password[32:]  # остальные 64 — хеш
+                salt = bytes.fromhex(salt_hex)
+                pwd_hash = hashlib.pbkdf2_hmac('sha256', provided_password.encode(), salt, 100000)
+                return pwd_hash.hex() == hash_hex
+            if librarian:
+                stored_password = librarian.password
+
+
+                a = verify_password(stored_password, provided_password=password)
+                if a:
+                    request.session['librarian_id'] = librarian.id
+                    return redirect('main')
+                else:
+                    error = 'Введите верный пароль'
+                    return redirect('login')
+            else:
+                error = 'Пройдите регистрацию'
+                return redirect('register')
+        else:
+            return redirect('login')
+    else:
+        form = LoginForm()
+
+    context = {'form':form, 'error':error}
+    return render(request, 'login.html', context)
+
+
+def register_user(request):
+    error = ''
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            cleaned_data = form.cleaned_data
+            username = cleaned_data.get('username')
+            password1 = cleaned_data.get('password1')
+            password2 = cleaned_data.get('password2')
+            if password1 == password2:
+                password = password1
+                def hash_password(password):
+                    salt = os.urandom(16)
+                    pwd_hash = hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 100000)
+                    return salt.hex() + pwd_hash.hex()
+
+                hashed = hash_password(password)
+                librarian = Librarian(username=username, password=hashed)
+                librarian.save()
+                return redirect('login')
+            else:
+                error = 'Пароль не совпадает'
+                return redirect('register')
+    else:
+        form = RegisterForm()
+
+    context = {'form':form, 'error': error}
+    return render(request, 'register.html', context)
+
+
+

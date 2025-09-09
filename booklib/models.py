@@ -246,3 +246,17 @@ class ReturnB(models.Model):
     def __str__(self):
         return f'{self.return_date}'
 
+
+class Librarian(models.Model):
+    username = models.CharField('Логин', max_length=20, unique=True)
+    password = models.CharField('Пароль', max_length=256)
+    status_user = models.BooleanField('Статус пользователя', default=0)
+    last_login = models.DateTimeField('Дата входа', auto_now_add=True)
+    date_joined = models.DateTimeField('Дата регистрации', auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Библиотекарь'
+        verbose_name_plural = 'Библиотекари'
+
+    def __str__(self):
+        return f'{self.username}'
