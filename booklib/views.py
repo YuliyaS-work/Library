@@ -14,6 +14,11 @@ from .forms import PersonForm, BookForm, GenreForm, ReturnForm1, ReturnForm2
 from .models import Book, BookObj, FotoRegistr, Author, Order, Person, ReturnB, FotoStatus
 
 
+def logout_user(request):
+    if 'logout_button' in request.POST:
+        request.session.flush()
+        return redirect('login')
+    return None
 
 def librarian_login_required(view_func):
     def wrapper(request, *args, **kwargs):
@@ -27,15 +32,21 @@ def get_main_page(request):
     '''Начальная страница.'''
     books = Book.objects.prefetch_related('bookobj_set', 'fotoregistr_set', 'author_set', 'genres').all()
     context={'books':books}
-    if request.method == 'POST':
-        if 'logout_button' in request.POST:
-            request.session.flush()
-            return redirect('login')
+    logout_response = logout_user(request)
+    if logout_response:
+        return logout_response
+
     return render(request, 'main_page.html', context)
+
 
 def get_new_book(request):
     '''Регистрация новой книги.'''
+    logout_response = logout_user(request)
+    if logout_response:
+        return logout_response
+
     formB = BookForm()
+    formG = GenreForm()
     if request.method == 'POST':
         if 'add_book' in request.POST:
             formB = BookForm(request.POST, request.FILES)
@@ -122,8 +133,6 @@ def get_new_book(request):
             else:
                 print(formB.errors)
 
-    formG = GenreForm()
-    if request.method == 'POST':
         formG = GenreForm(request.POST)
         if 'add_genre' in request.POST:
             if formG.is_valid():
@@ -138,26 +147,38 @@ def get_new_book(request):
 
 def get_new_person(request):
     '''Регистрация нового читателя.'''
+
+    logout_response = logout_user(request)
+    if logout_response:
+        return logout_response
+
     formP = PersonForm()
     if request.method == 'POST':
+
         formP = PersonForm(request.POST)
         if formP.is_valid():
             formP.save()
             return redirect('/lib/add_person')
         else:
             print(formP.errors)
-
     context = {'formP':formP}
+
     return render(request, 'add_person.html', context)
 
 
 def give_book(request):
     '''Выдача книги.'''
+
+    logout_response = logout_user(request)
+    if logout_response:
+        return logout_response
+
     books = Book.objects.filter(current_quantity__gt=0)
     persons = Person.objects.filter(quantity_books__lt=5)
     pre_return_date = date.today() + timedelta(days=30)
     pre_return_date_str = pre_return_date.strftime('%Y-%m-%d')
     if request.method == 'POST':
+        logout_user(request)
         person_id = request.POST.get('person')
         person = Person.objects.get(pk=person_id)
         person.quantity_books += int(request.POST.get('quantity_books'))
@@ -220,6 +241,12 @@ def get_bookobj(request):
 
 
 def return_book(request):
+    '''Оформляет возврат книг в библиотеку. Книги становятся доступными для выдачи.'''
+
+    logout_response = logout_user(request)
+    if logout_response:
+        return logout_response
+
     formR1 = ReturnForm1()
     formR2 = ReturnForm2()
     book_list = []
@@ -231,7 +258,7 @@ def return_book(request):
     orderID=''
 
     if request.method == 'POST':
-
+        logout_user(request)
         if 'data_books' in request.POST:
             formR1 = ReturnForm1(request.POST)
             if formR1.is_valid():
@@ -449,6 +476,4 @@ def register_user(request):
 
     context = {'form':form, 'error': error}
     return render(request, 'register.html', context)
-
-
 
