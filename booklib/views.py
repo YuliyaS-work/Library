@@ -38,7 +38,7 @@ def get_main_page(request):
 
     return render(request, 'main_page.html', context)
 
-
+@librarian_login_required
 def get_new_book(request):
     '''Регистрация новой книги.'''
     logout_response = logout_user(request)
@@ -144,7 +144,7 @@ def get_new_book(request):
     context = {'formB':formB, 'formG':formG}
     return render(request, 'add_book.html', context)
 
-
+@librarian_login_required
 def get_new_person(request):
     '''Регистрация нового читателя.'''
 
@@ -165,7 +165,7 @@ def get_new_person(request):
 
     return render(request, 'add_person.html', context)
 
-
+@librarian_login_required
 def give_book(request):
     '''Выдача книги.'''
 
@@ -239,7 +239,7 @@ def get_bookobj(request):
         })
     return JsonResponse(data, safe=False)
 
-
+@librarian_login_required
 def return_book(request):
     '''Оформляет возврат книг в библиотеку. Книги становятся доступными для выдачи.'''
 
