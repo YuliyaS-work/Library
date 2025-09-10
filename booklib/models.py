@@ -199,9 +199,9 @@ class Order(models.Model):
 
 
     def get_debt_order(self):
-        # days_use = date.today() - self.distrib_date
-        # days = days_use.days
-        days = '20'
+        days_use = date.today() - self.distrib_date
+        days = days_use.days
+        # days = '20'
         books_return = []
         for returnb in self.returnb_set.all():
             spisok_books = list(returnb.bookobj_set.all())

@@ -357,9 +357,9 @@ def return_book(request):
                     returnB.bookobj_set.set(bookobj_list)
                     # print(returnB.bookobj_set.all())
 
-                    # days_full = return_date - returnB.order.distrib_date
-                    # days = days_full.days
-                    days = '10'
+                    days_full = return_date - returnB.order.distrib_date
+                    days = days_full.days
+                    # days = '10'
                     # print(days)
                     summa = sum(book.current_day_price for book in returnB.bookobj_set.all())
                     # print(summa)
