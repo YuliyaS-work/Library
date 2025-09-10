@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import login_user, register_user, get_main_page, get_new_book, get_new_person, give_book, get_bookobj, return_book
+from .views import get_main_page, get_new_book, get_new_person, give_book, get_bookobj, return_book, auth_user
 from .Yulia import get_rait_page
 
 urlpatterns = [
@@ -11,6 +11,7 @@ urlpatterns = [
     path('give_book/get_bookobj/', get_bookobj, name='get_bookobj'),
     path('return_book/', return_book, name = 'return_book'),
     path('raiting_book/', get_rait_page, name = 'raiting'),
-    path('login/', login_user, name='login'),
-    path('register/', register_user, name='register'),
+    path('login/', auth_user, name='login'),
+    # path('login/', login_user, name='login'),
+    # path('register/', register_user, name='register'),
 ]

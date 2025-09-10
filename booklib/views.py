@@ -417,74 +417,141 @@ def return_book(request):
     return render(request, 'return.html', context)
 
 
-def login_user(request):
-    error = ''
+def auth_user(request):
+    login_form = LoginForm()
+    register_form = RegisterForm()
+    login_error = ''
+    register_error = ''
+    show_register = False  # <-- флаг по умолчанию
+
     if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            cleaned_data = form.cleaned_data
-            username = cleaned_data.get('username')
-            password = cleaned_data.get('password')
-            librarian = Librarian.objects.filter(username=username).first()
-            def verify_password(stored_password, provided_password):
-                salt_hex = stored_password[:32]  # первые 32 символа — соль
-                hash_hex = stored_password[32:]  # остальные 64 — хеш
-                salt = bytes.fromhex(salt_hex)
-                pwd_hash = hashlib.pbkdf2_hmac('sha256', provided_password.encode(), salt, 100000)
-                return pwd_hash.hex() == hash_hex
-            if librarian:
-                stored_password = librarian.password
+        # Определяем, какая форма была отправлена по имени кнопки
+        if 'login_submit' in request.POST:
+            login_form = LoginForm(request.POST)
+            if login_form.is_valid():
+                username = login_form.cleaned_data.get('username')
+                password = login_form.cleaned_data.get('password')
+                librarian = Librarian.objects.filter(username=username).first()
 
+                def verify_password(stored_password, provided_password):
+                    salt_hex = stored_password[:32]  # первые 16 байт = 32 символа
+                    hash_hex = stored_password[32:]
+                    salt = bytes.fromhex(salt_hex)
+                    pwd_hash = hashlib.pbkdf2_hmac(
+                        'sha256', provided_password.encode(), salt, 100000
+                    )
+                    return pwd_hash.hex() == hash_hex
 
-                a = verify_password(stored_password, provided_password=password)
-                if a:
+                if librarian and verify_password(librarian.password, password):
                     request.session['librarian_id'] = librarian.id
                     return redirect('main')
                 else:
-                    error = 'Введите верный пароль'
-                    context = {'form': form, 'error': error}
-                    return render(request, 'login.html', context)
-            else:
-                error = 'Пройдите регистрацию'
-                context = {'form': form, 'error': error}
-                return render(request, 'login.html', context)
-        else:
-            return redirect('login')
-    else:
-        form = LoginForm()
+                    login_error = 'Неверное имя пользователя или пароль'
 
-    context = {'form':form, 'error':error}
+        elif 'register_submit' in request.POST:
+            register_form = RegisterForm(request.POST)
+            show_register = True  # <-- переключаемся на форму регистрации
+            if register_form.is_valid():
+                username = register_form.cleaned_data.get('username')
+                password1 = register_form.cleaned_data.get('password1')
+                password2 = register_form.cleaned_data.get('password2')
+
+                if Librarian.objects.filter(username=username).exists():
+                    register_error = 'Пользователь с таким именем уже существует'
+                elif password1 != password2:
+                    register_error = 'Пароли не совпадают'
+                else:
+                    # Хешируем пароль
+                    salt = os.urandom(16)
+                    pwd_hash = hashlib.pbkdf2_hmac('sha256', password1.encode(), salt, 100000)
+                    hashed = salt.hex() + pwd_hash.hex()
+
+                    # Создаём пользователя
+                    librarian = Librarian(username=username, password=hashed)
+                    librarian.save()
+                    return redirect('login')  # можно сразу показать страницу логина
+            else:
+                register_error = 'Проверьте корректность введённых данных'
+
+    context = {
+        'login_form': login_form,
+        'form': register_form,
+        'login_error': login_error,
+        'register_error': register_error,
+        'show_register': show_register,  # <-- передаём в шаблон
+    }
+
     return render(request, 'login.html', context)
 
 
-def register_user(request):
-    error = ''
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            cleaned_data = form.cleaned_data
-            username = cleaned_data.get('username')
-            password1 = cleaned_data.get('password1')
-            password2 = cleaned_data.get('password2')
-
-            librarian = Librarian.objects.filter(username=username).first()
-            if librarian:
-                error = 'Пользователь с таким именем зарегистрирован'
-                context = {'form': form, 'error': error}
-                return render(request, 'register.html', context)
-            if password1 == password2:
-                salt = os.urandom(16)
-                pwd_hash = hashlib.pbkdf2_hmac('sha256', password1.encode(), salt, 100000)
-                hashed = salt.hex() + pwd_hash.hex()
-                librarian = Librarian(username=username, password=hashed)
-                librarian.save()
-                return redirect('login')
-            else:
-                error = 'Пароль не совпадает'
-                context = {'form': form, 'error': error}
-                return render(request, 'register.html', context)
-    else:
-        form = RegisterForm()
-
-    context = {'form':form, 'error': error}
-    return render(request, 'register.html', context)
+# def login_user(request):
+#     error = ''
+#     if request.method == 'POST':
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+#             cleaned_data = form.cleaned_data
+#             username = cleaned_data.get('username')
+#             password = cleaned_data.get('password')
+#             librarian = Librarian.objects.filter(username=username).first()
+#             def verify_password(stored_password, provided_password):
+#                 salt_hex = stored_password[:32]  # первые 32 символа — соль
+#                 hash_hex = stored_password[32:]  # остальные 64 — хеш
+#                 salt = bytes.fromhex(salt_hex)
+#                 pwd_hash = hashlib.pbkdf2_hmac('sha256', provided_password.encode(), salt, 100000)
+#                 return pwd_hash.hex() == hash_hex
+#             if librarian:
+#                 stored_password = librarian.password
+#
+#
+#                 a = verify_password(stored_password, provided_password=password)
+#                 if a:
+#                     request.session['librarian_id'] = librarian.id
+#                     return redirect('main')
+#                 else:
+#                     error = 'Введите верный пароль'
+#                     context = {'form': form, 'error': error}
+#                     return render(request, 'login.html', context)
+#             else:
+#                 error = 'Пройдите регистрацию'
+#                 context = {'form': form, 'error': error}
+#                 return render(request, 'login.html', context)
+#         else:
+#             return redirect('login')
+#     else:
+#         form = LoginForm()
+#
+#     context = {'form':form, 'error':error}
+#     return render(request, 'login.html', context)
+#
+#
+# def register_user(request):
+#     error = ''
+#     if request.method == 'POST':
+#         form = RegisterForm(request.POST)
+#         if form.is_valid():
+#             cleaned_data = form.cleaned_data
+#             username = cleaned_data.get('username')
+#             password1 = cleaned_data.get('password1')
+#             password2 = cleaned_data.get('password2')
+#
+#             librarian = Librarian.objects.filter(username=username).first()
+#             if librarian:
+#                 error = 'Пользователь с таким именем зарегистрирован'
+#                 context = {'form': form, 'error': error}
+#                 return render(request, 'register.html', context)
+#             if password1 == password2:
+#                 salt = os.urandom(16)
+#                 pwd_hash = hashlib.pbkdf2_hmac('sha256', password1.encode(), salt, 100000)
+#                 hashed = salt.hex() + pwd_hash.hex()
+#                 librarian = Librarian(username=username, password=hashed)
+#                 librarian.save()
+#                 return redirect('login')
+#             else:
+#                 error = 'Пароль не совпадает'
+#                 context = {'form': form, 'error': error}
+#                 return render(request, 'register.html', context)
+#     else:
+#         form = RegisterForm()
+#
+#     context = {'form':form, 'error': error}
+#     return render(request, 'register.html', context)
