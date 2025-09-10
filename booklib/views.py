@@ -473,13 +473,9 @@ def register_user(request):
                 context = {'form': form, 'error': error}
                 return render(request, 'register.html', context)
             if password1 == password2:
-                password = password1
-                def hash_password(password):
-                    salt = os.urandom(16)
-                    pwd_hash = hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 100000)
-                    return salt.hex() + pwd_hash.hex()
-
-                hashed = hash_password(password)
+                salt = os.urandom(16)
+                pwd_hash = hashlib.pbkdf2_hmac('sha256', password1.encode(), salt, 100000)
+                hashed = salt.hex() + pwd_hash.hex()
                 librarian = Librarian(username=username, password=hashed)
                 librarian.save()
                 return redirect('login')
