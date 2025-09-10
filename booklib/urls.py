@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import get_main_page, get_new_book, get_new_person, give_book, get_bookobj, return_book, login_user, register_user
+from .views import login_user, register_user, get_main_page, get_new_book, get_new_person, give_book, get_bookobj, return_book
 from .Yulia import get_rait_page
 
 urlpatterns = [

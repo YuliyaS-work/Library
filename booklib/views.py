@@ -417,7 +417,6 @@ def return_book(request):
     return render(request, 'return.html', context)
 
 
-
 def login_user(request):
     error = ''
     if request.method == 'POST':
@@ -467,6 +466,12 @@ def register_user(request):
             username = cleaned_data.get('username')
             password1 = cleaned_data.get('password1')
             password2 = cleaned_data.get('password2')
+
+            librarian = Librarian.objects.filter(username=username).first()
+            if librarian:
+                error = 'Пользователь с таким именем зарегистрирован'
+                context = {'form': form, 'error': error}
+                return render(request, 'register.html', context)
             if password1 == password2:
                 password = password1
                 def hash_password(password):
@@ -487,4 +492,3 @@ def register_user(request):
 
     context = {'form':form, 'error': error}
     return render(request, 'register.html', context)
-
