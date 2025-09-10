@@ -20,22 +20,22 @@ def logout_user(request):
         return redirect('login')
     return None
 
-def librarian_login_required(view_func):
+def librarian_login_required(fn):
     def wrapper(request, *args, **kwargs):
         if request.session.get('librarian_id'):
-            return view_func(request, *args, **kwargs)
+            return fn(request, *args, **kwargs)
         return redirect('login')
     return wrapper
 
 @librarian_login_required
 def get_main_page(request):
     '''Начальная страница.'''
-    books = Book.objects.prefetch_related('bookobj_set', 'fotoregistr_set', 'author_set', 'genres').all()
-    context={'books':books}
     logout_response = logout_user(request)
     if logout_response:
-        return logout_response
+         return logout_response
 
+    books = Book.objects.prefetch_related('bookobj_set', 'fotoregistr_set', 'author_set', 'genres').all()
+    context = {'books': books}
     return render(request, 'main_page.html', context)
 
 @librarian_login_required
@@ -152,17 +152,17 @@ def get_new_person(request):
     if logout_response:
         return logout_response
 
-    formP = PersonForm()
     if request.method == 'POST':
-
         formP = PersonForm(request.POST)
         if formP.is_valid():
             formP.save()
             return redirect('/lib/add_person')
         else:
             print(formP.errors)
-    context = {'formP':formP}
+    else:
+        formP = PersonForm()
 
+    context = {'formP':formP}
     return render(request, 'add_person.html', context)
 
 @librarian_login_required
@@ -181,8 +181,11 @@ def give_book(request):
         logout_user(request)
         person_id = request.POST.get('person')
         person = Person.objects.get(pk=person_id)
-        person.quantity_books += int(request.POST.get('quantity_books'))
-        person.save()
+        if request.POST.get('quantity_books'):
+            person.quantity_books += int(request.POST.get('quantity_books'))
+            person.save()
+        else:
+            return redirect('give_book')
 
         order = Order(
             person = person,
@@ -269,7 +272,7 @@ def return_book(request):
                     bookobjs_order =order.book_obj.filter(status_book=True)
                     book_list=[BookObj.objects.filter(pk=b.pk) for b in bookobjs_order]
                     # print(book_list)
-                except 	AttributeError:
+                except 	(AttributeError):
                     return redirect('/lib/return_book/')
             else:
                 print(formR1.errors)
@@ -277,8 +280,13 @@ def return_book(request):
         formR2 = ReturnForm2(book_list=book_list)
         book_list=book_list
         # print(f'This {book_list}')
-        orderID = request.session['orderID']
-        # print(orderID)
+
+        if request.session.get('orderID'):
+            orderID = request.session['orderID']
+            # print(orderID)
+        else:
+            context = {'formR1': formR1, 'formR2': formR2, 'return_cost': cost, 'error': error}
+            return render(request, 'return.html', context)
         order = Order.objects.get(pk=orderID)
         # print(order)
 
@@ -435,10 +443,12 @@ def login_user(request):
                     return redirect('main')
                 else:
                     error = 'Введите верный пароль'
-                    return redirect('login')
+                    context = {'form': form, 'error': error}
+                    return render(request, 'login.html', context)
             else:
                 error = 'Пройдите регистрацию'
-                return redirect('register')
+                context = {'form': form, 'error': error}
+                return render(request, 'login.html', context)
         else:
             return redirect('login')
     else:
@@ -470,7 +480,8 @@ def register_user(request):
                 return redirect('login')
             else:
                 error = 'Пароль не совпадает'
-                return redirect('register')
+                context = {'form': form, 'error': error}
+                return render(request, 'register.html', context)
     else:
         form = RegisterForm()
 
