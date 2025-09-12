@@ -20,7 +20,7 @@ class Book(models.Model):
     title_orig = models.CharField('Наименование книги (ориг.)', max_length=200, null=True, blank=True)
     year = models.PositiveIntegerField('Год издания', null=True,blank=True)
     quantity_pages = models.PositiveIntegerField('Количество страниц',null=True,blank=True)
-    rating = models.DecimalField('Общий рейтинг', max_digits=2, decimal_places=1, null=True, blank=True)
+    rating = models.DecimalField('Общий рейтинг', max_digits=2, decimal_places=1, default=0)
     counter_rating = models.DecimalField('Счетчик рейтинга', max_digits=2, decimal_places=1, default=0, null=True, blank=True)
     return_rating = models.DecimalField('Рейтинг при возврате', max_digits=2, decimal_places=1, choices = rating_book, null=True, blank=True)
     general_quantity = models.IntegerField('Общее количество экземпляров', default=0, null=True, blank=True)

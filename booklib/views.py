@@ -34,8 +34,30 @@ def get_main_page(request):
     if logout_response:
          return logout_response
 
+    spisok_rait = []
+    dict_rait = {}
+    date_past = date.today() - timedelta(days=90)
     books = Book.objects.prefetch_related('bookobj_set', 'fotoregistr_set', 'author_set', 'genres').all()
-    context = {'books': books}
+
+    for book in books:
+        bookobjs = book.bookobj_set.all()
+        counter = 0
+        for bookobj in bookobjs:
+            count_order = bookobj.order_set.filter(distrib_date__gte=date_past).all()
+            length = len(list(count_order))
+            counter += length
+        dict_rait[counter] = book.id
+
+    for i, j in dict_rait.items():
+        spisok_rait.append([i, j])
+    spisok_rait.sort()
+    spisok_rait.reverse()
+
+    list_books = spisok_rait[:3]
+    for sp in list_books:
+        sp[1] = Book.objects.filter(pk=sp[1]).first()
+
+    context = {'books': books, 'list_books': list_books}
     return render(request, 'main_page.html', context)
 
 @librarian_login_required
@@ -326,8 +348,7 @@ def return_book(request):
                                 if return_rating:
                                     bookobj.book.return_rating = return_rating
                                     # print(bookobj.book.return_rating)
-                                    if bookobj.book.rating is None:
-                                        bookobj.book.rating = 0
+                                    if bookobj.book.rating == 0:
                                         bookobj.book.rating = int(return_rating)
                                     else:
                                         rating = round((float(bookobj.book.rating) * int(bookobj.book.counter_rating) + int(bookobj.book.return_rating)) / (int(bookobj.book.counter_rating) + 1), 1)

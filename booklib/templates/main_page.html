@@ -5,6 +5,34 @@
 
 {% block content %}
 <div style=" padding: 20px;">
+    <table id="Table" class="display" >
+        <thead>
+            <tr>
+                <th>Фото книги</th>
+                <th>Рейтинг</th>
+                <th>Количество прочитавших</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for count, book in list_books %}
+            <tr>
+                <td>{% with book.fotoregistr_set.all as photos %}
+                        {% if photos %}
+                            <img src="{{ photos.0.photo_book.url }}" alt="{{ book.title_rus }}" style="width:80px; height:auto;">
+                        {% else %}
+                            Нет изображения
+                        {% endif %}
+                        {% endwith %}
+                </td>
+                <td>{{ book.rating }}</td>
+                <td>{{ count }}</td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div style=" padding: 20px;">
 <table id="myTable" class="display" >
         <thead>
             <tr>
