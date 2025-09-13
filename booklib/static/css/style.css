@@ -1,120 +1,258 @@
-* {
-    margin: 0;
-    padding: 0;
-}
+/* Общие стили */
 body {
-  overflow-x: auto;
+    margin: 0;
+    font-family: 'Palatino', sans-serif;
+    /* фон */
+    background-image: url('/static/image/2.jpg'); /* путь к изображению */
+    background-size: cover;        /* растягиваем на всю страницу */
+    background-repeat: no-repeat;  /* без повторения */
+    background-attachment: fixed;  /* фон фиксация*/
+    background-position: center 100px;
 }
+/* Кнопки на других стр */
+.button_dr{
+    width: 200px;
+    background-color: #557A95;
+    padding: 12px 20px;
+    color: white;
+    text-align: center;
+    font-family: 'Palatino', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+.button_dr:hover {
+    background-color: #659DBD;
+    transform: scale(1.05);
+}
+
+/* Шапка */
+header {
+    width: 100%;
+    background-color: #D4D5CF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+
+    position: fixed;   /* фиксируем */
+    top: 0;            /* прижимаем к верху */
+    left: 0;
+    z-index: 1000;     /* поверх всего остального */
+}
+header a {
+    display: inline-block; /* чтобы ссылка оборачивала лого корректно */
+}
+.logo {
+    display: block;
+    max-height: 100%;
+    max-width: 90%;
+    height: auto;
+    width: auto;
+}
+
+/* Основное содержимое: меню + таблица  */
 .content {
-    width: 1200px; /* ширина больше ширины экрана, чтобы вызвать прокрутку */
+    display: flex;           /* кнопки + рейтинг слева, контент справа */
+    align-items: flex-start;
+    gap: 20px;
+    margin-top: 200px;       /* чтобы учесть фиксированный header */
     padding: 20px;
 }
 
-header {
-    width: auto;
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;  /* центрируем по горизонтали */
-    align-items: center;      /* центрируем по вертикали */
-    height: 200px;
-    overflow: hidden;
-
-}
-
-.logo {
-    max-height: 100%;  /* логотип не выше 200px */
-    max-width: 90%;    /* чтобы не упирался в края экрана */
-    height: auto;      /* сохраняем пропорции */
-    width: auto;
-}
-
+/* Кнопки слева */
 .button_container {
-  width: 20%;
-  height: 100%;
-  padding: 20px;
-  margin-left: 20px;
-  float: left;
-  display: flex;
-  flex-direction: column; /* расположение по вертикали */
-  align-items: flex-start; /* по левому краю */
+    flex: 0 0 200px;            /* фиксированная ширина меню */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
 }
 
-.button-link {
-  width: 170px;
-  background-color: #305070;
-  padding: 12px 24px;
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  font-size: 18px;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s, transform 0.2s;
+.button_container .button-link,
+.button_container form button {
+    width: 100%;
+    background-color: #557A95;
+    padding: 12px 20px;
+    color: white;
+    text-align: center;
+    font-family: 'Palatino', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
+    box-sizing: border-box;
+    text-decoration: none;
 }
-.button-link:hover {
-  background-color: #45799f;
-  transform: scale(1.05);
+.button_container .button-link:hover,
+.button_container form button:hover {
+    background-color: #659DBD;
+    transform: scale(1.05);
 }
-
-.form-container {
-  width: 60%;
-  padding: 10px;
-  float: left;
-  font-size: 18px;
+.button_container form button {
+    background-color: #c94c4c;
 }
-
-.form-container-book {
-  width: 50%;
-  padding: 10px;
-  float: left;
-  font-size: 18px;
+.button_container form button:hover {
+    background-color: #e06b6b;
 }
 
-form p {
-  margin-bottom: 5px; /* расстояние между полями */
+/*  Контент справа  */
+.main-content {
+    flex: 1;
+    min-width: 0;
 }
-form p label {
-  display: block; /* чтобы метка была на отдельной строке */
-  margin-bottom: 5px; /* расстояние между меткой и полем */
-}
-form p input,
-form p textarea {
-  width: 50%; /* например, чтобы поля растягивались */
-  height: 25px;
-}
-form p select {
-  width: 50%; /* например, чтобы поля растягивались */
+.table-wrapper {
+    max-height: 500px;   /* фиксируем высоту области */
+    overflow-y: auto;    /* вертикальная прокрутка */
+    overflow-x: auto;    /* горизонтальная прокрутка при узких экранах */
+    border-radius: 10px;
 }
 
-
-
-.genre {
-  width: 15%;
-  padding: 10px;
-  float: left;
-  font-size: 18px;
+/* Таблица */
+table.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+/* Шапка таблицы с градиентом и центрированием текста */
+table.styled-table thead tr {
+    background: linear-gradient(180deg, #2C4058 0%, #557A95 70%, #96B0D6 100%);
+    color: white;
+    font-weight: bold;
 }
 
-.button-submit {
-  width: 150px;
-  background-color: #305070;
-  padding: 6px;
-  margin-top: 10px;
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s, transform 0.2s;
-}
-.button-submit:hover {
-  background-color: #45799f;
-  transform: scale(1.05);
+/* Заголовки  */
+table.styled-table th {
+    text-align: center;
+    vertical-align: middle;
+    padding: 12px 15px;
+    /* фиксируем заголовок */
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: linear-gradient(180deg, #2C4058 0%, #557A95 70%, #96B0D6 100%);
+    color: white;
 }
 
+/* Ячейки таблицы  */
+table.styled-table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 12px 15px;
+}
+
+/* Полосатые строки */
+table.styled-table tbody tr:nth-child(even) {
+    background-color: #f1f1f1; /* чуть темнее */
+}
+
+/* Hover эффект */
+table.styled-table tbody tr:hover {
+    background-color: #e5e5e5;
+}
+
+/* Картинки в таблице */
+.styled-table img {
+    max-width: 80px;
+    max-height: 100px;
+    width: auto;
+    height: auto;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Адаптив */
+@media screen and (max-width: 1024px) {
+    .content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+     /* Боковая панель */
+    .sidebar {
+        flex-direction: column;  /* кнопки и рейтинг вертикально */
+        width: 100%;
+        gap: 20px;
+    }
+    .button_container {
+        flex-direction: row;    /* кнопки в ряд */
+        flex-wrap: wrap;
+        justify-content: flex-start; /* выравнивание слева */
+        gap: 10px;
+    }
+    .button_container .button-link,
+    .button_container form button {
+        flex: 0 0 auto; /* фиксированная ширина кнопки */
+        width: 200px;
+    }
+    .rating-list {
+        flex-direction: column;  /* рейтинг вертикально под кнопками */
+        gap: 15px;
+    }
+
+    .main-content {
+        width: 100%;
+        margin-top: 20px;  /* небольшой отступ сверху */
+    }
+
+    .rating-item {
+        width: 100%; /* чтобы не налезало на кнопки */
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
+    .rating-photo {
+        margin-right: 10px;
+    }
+}
+/* Адаптив для маленьких экранов (например, мобильные) */
+@media screen and (max-width: 600px) {
+    .button_container {
+        display: flex;
+        flex-direction: row;       /* кнопки в ряд */
+        flex-wrap: wrap;           /* перенос на новую строку */
+        justify-content: center;   /* центрируем кнопки */
+        gap: 10px;
+        width: 100%;
+    }
+
+    .button_container .button-link,
+    .button_container form button {
+        flex: 0 0 48%;             /* две колонки с небольшим отступом */
+        max-width: 48%;
+        margin-bottom: 10px;
+    }
+
+    .rating-list {
+        display: flex;
+        flex-direction: column;    /* рейтинг вертикально */
+        align-items: center;
+        width: 100%;               /* чтобы не растягивался */
+        max-width: 300px;          /* можно подогнать под боковую панель */
+        margin: 0 auto;            /* центрируем */
+        gap: 15px;
+    }
+
+    .rating-item {
+        width: 100%;               /* занимают всю ширину рейтинга */
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    .rating-photo {
+        margin-right: 10px;
+        margin-bottom: 0;
+    }
+}
+/* Сообщения */
 .toast {
   position: fixed;
   top: 50%;
@@ -131,54 +269,208 @@ form p select {
   font-size: 18px;
   z-index: 999;
 }
-
-/* когда форма отправлена (через :target) */
 #toast:target {
   animation: popupToast 3s forwards;
 }
-
-/* анимация: появляется, держится, исчезает */
 @keyframes popupToast {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
-  10% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  90% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.8);
-  }
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+  10%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  90%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
 }
 
 .errorlist {
-    color: red;
+  color: red;
+}
+/* контейнер формы жанра */
+.forms-wrapper {
+    display: flex;
+    gap: 40px;           /* расстояние между формами */
+    align-items: flex-start;
+}
+/* Форма книги */
+.form-container-book {
+    flex: 1;             /* занимает всё доступное пространство */
+    max-width: 400px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;            /* расстояние между полями */
 }
 
-table {
-    border: 1px solid black;
-    border-collapse:collapse
+/* Форма жанра — компактная */
+.form-container-genre {
+    flex: 0 0 250px;                     /* фиксированная ширина */
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;                 /* расстояние между полями */
 }
-th {
-    border: 1px solid black;
-    padding: 5px;
-    vertical-align: top;
+
+
+.button_genre {
+    width:  200px;
+    background-color: #557A95;
+    padding: 12px 20px;
+    color: white;
     text-align: center;
+    font-family: 'Palatino', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.2s;
 }
-tr {
-    border: 1px solid black;
-    padding: 5px;
-    text-align: left;
+.button_genre:hover {
+    background-color: #659DBD;
+    transform: scale(1.05);
 }
-td {
-    border: 1px solid black;
+
+/* Поля внутри формы жанра */
+.form-container-genre input[type="text"],
+.form-container-genre select,
+.form-container-genre textarea {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+.form-container-genre p {margin-bottom: 0;}
+.form-container-genre p input {margin-top: 0; margin-bottom: 10px;}
+
+/* Форма регистрации читателя  */
+.form-container {
+    flex: 1;                  /* форма занимает всё доступное место справа */
+    max-width: 400px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Стили для */
+.form-container input[type="text"],
+.form-container input[type="email"],
+.form-container input[type="password"],
+.form-container input[type="number"],
+.form-container input[type="date"],
+.form-container input[type="file"],
+.form-container select,
+.form-container textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.form-container input[type="file"] {
     padding: 5px;
-    vertical-align: top;
-    text-align: left;
+}
+.form-container-give{
+    max-width: 800px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;  /* выравнивание по вертикали */
+    gap: 10px;            /* расстояние между label и select */
+    margin-bottom: 8px;   /* расстояние до следующей строки */
+}
+
+.form-row label {
+    width: 180px;         /* фиксированная ширина для всех label */
+    text-align: right;
+}
+
+.form-row select,
+.form-row input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+.form-row.small-input input {
+    flex: 0 0 25%;
+}
+/* Боковая панель слева */
+.sidebar {
+    flex: 0 0 220px;         /* фиксированная ширина */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Кнопки */
+.button_container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Рейтинг под кнопками */
+.rating-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.rating-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    background-color: rgba(255,255,255,0.85);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    width: 90%; /* чтобы не растягивалось за пределы sidebar */
+}
+
+.rating-photo {
+    width: 70px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.rating-photo.placeholder {
+    width: 80px;
+    height: 100px;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 12px;
+}
+.rating-stars {
+    display: flex;
+    gap: 3px;             /* расстояние между звездами */
+    font-size: 18px;       /* размер звезд */
+    color: gold;           /* цвет заполненных звезд */
+}
+.rating-stars .star {
+    color: #ccc;      /* цвет пустых звезд */
+}
+.rating-stars .star.filled {
+    color: gold;           /* цвет заполненных звезд */
 }

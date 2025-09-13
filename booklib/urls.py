@@ -10,6 +10,4 @@ urlpatterns = [
     path('give_book/get_bookobj/', get_bookobj, name='get_bookobj'),
     path('return_book/', return_book, name = 'return_book'),
     path('login/', auth_user, name='login'),
-    # path('login/', login_user, name='login'),
-    # path('register/', register_user, name='register'),
 ]

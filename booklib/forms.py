@@ -257,5 +257,5 @@ class LoginForm(forms.Form):
 
 class RegisterForm(forms.Form):
     username = forms.CharField(label='Логин')
-    password1 = forms.CharField(label='Пароль1', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Пароль2', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Введите пароль', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput)

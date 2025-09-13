@@ -6,33 +6,25 @@ add_book
 {% endblock %}
 
 {% block content %}
-<div class="form-container-book">
-    <form action="#toast" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ formB.as_p }}
-        <input type="submit" value="Зарегистрировать" name="add_book" class="button-submit">
-    </form>
-    {% if formB.errors %}
-    {% else %}
-        <div id="toast" class="toast">Книга зарегистрирована</div>
-    {% endif %}
-</div>
-<div class="genre">
-    <p style="color: white;
-              background: #305070;
-              border-radius: 5px;
-              text-align: center;
-              width: 170px;
-              padding: 12px 24px;
-              margin-top: 15px;
-              margin-bottom: 15px;">
-        Новый жанр
-    </p>
-    <form action="" method="POST">
-        {% csrf_token %}
-        {{ formG.as_p }}
-        <input type="submit" value="Добавить" name="add_genre" class="button_submit">
-    </form>
-</div>
-
+<div class="forms-wrapper">
+    <div class="form-container-book form-container">
+        <form action="#toast" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ formB.as_p }}
+            <input type="submit" value="Зарегистрировать" name="add_book" class="button_dr">
+        </form>
+        {% if formB.errors %}
+        {% else %}
+            <div id="toast" class="toast">Книга зарегистрирована</div>
+        {% endif %}
+    </div>
+    <div class="form-container-genre">
+        <p>Новый жанр</p>
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{ formG.as_p }}
+            <input type="submit" value="Добавить" name="add_genre" class="button_genre">
+        </form>
+    </div>
+ </div>
 {% endblock %}

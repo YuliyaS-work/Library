@@ -4,46 +4,62 @@
 {% block title %}Выдача книги{% endblock %}
 
 {% block content %}
-<div class="form-container">
+<div class="form-container-give">
 <form  action="#toast" method="POST">
     {% csrf_token %}
-    <br>
+    <div class="form-row">
     <label for="person">Читатель</label>
     <select id="person" name="person">
         {% for person in persons %}
         <option value="{{ person.id }}">{{ person }}</option>
         {% endfor %}
-    </select><br><br>
-    {% for i in "12345" %}
-    <label for="book_{{ i }}">Книга{{ i }}</label>
-    <select id="book_{{ i }}" name="book_{{ i }}" class="book-select">
-        <option value="">--Выберите книгу--</option>
-        {% for book in books %}
-        <option value="{{ book.id }}">{{ book }}</option>
-        {% endfor %}
     </select>
-    <label for="bookobj_{{ i }}">Регистрационный номер</label>
-    <select id="bookobj_{{ i }}" name="bookobj_{{ i }}" disabled>
-        <option value="">--номер--</option>
-    </select><br><br>
+    </div>
 
+    {% for i in "12345" %}
+    <div class="form-row">
+        <label for="book_{{ i }}">Книга{{ i }}</label>
+        <select id="book_{{ i }}" name="book_{{ i }}" class="book-select">
+            <option value="">--Выберите книгу--</option>
+            {% for book in books %}
+            <option value="{{ book.id }}">{{ book }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="bookobj_{{ i }}">Регистрационный номер</label>
+        <select id="bookobj_{{ i }}" name="bookobj_{{ i }}" disabled>
+            <option value="">--номер--</option>
+        </select>
+    </div>
     {% endfor %}
+
+    <div class="form-row small-input">
     <label for="quantity_books">Количество книг</label>
-    <input id="quantity_books" name="quantity_books" value="" readonly><br><br>
+    <input id="quantity_books" name="quantity_books" value="" readonly>
+    </div>
+
+    <div class="form-row small-input">
     <label for="discount">Скидка</label>
-    <input id="discount" name="discount" value="" readonly><br><br>
+    <input id="discount" name="discount" value="" readonly>
+    </div>
+
+    <div class="form-row small-input">
     <label for="pre_return_date">Предварительная дата возврата</label>
-    <input type="date" id="pre_return_date" name="pre_return_date" value="{{ pre_return_date }}" readonly><br><br>
+    <input type="date" id="pre_return_date" name="pre_return_date" value="{{ pre_return_date }}" readonly>
+    </div>
+
+    <div class="form-row small-input">
     <label for="pre_cost" >Предварительная стоимость</label>
-    <input type="number" id="pre_cost" name="pre_cost" value="" step="any" readonly> <br><br>
-    <input type="submit" value="Зарегистрировать" name="give_book" class="button-submit">
+    <input type="number" id="pre_cost" name="pre_cost" value="" step="any" readonly>
+    </div>
+
+    <input type="submit" value="Зарегистрировать" name="give_book" class="button_dr">
+
 </form>
 <div id="toast" class="toast">Выдача зарегистрирована</div>
 </div>
 
 
 <script src="{% static 'js/formO.js' %}" defer></script>
-<script>
-     const getBookObjUrl = "{% url 'get_bookobj' %}";
-</script>
+<script> const getBookObjUrl = "{% url 'get_bookobj' %}"; </script>
 {% endblock %}

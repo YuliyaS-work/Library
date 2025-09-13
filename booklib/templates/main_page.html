@@ -1,45 +1,27 @@
 {% extends 'basic.html' %}
 {% load static %}
 
-{% block title %}main{% endblock %}
-
+{% block title %}Список книг{% endblock %}
 {% block content %}
-<div style=" padding: 20px;">
-    <table id="Table" class="display" >
-        <thead>
-            <tr>
-                <th>Фото книги</th>
-                <th>Рейтинг</th>
-                <th>Количество прочитавших</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for count, book in list_books %}
-            <tr>
-                <td>{% with book.fotoregistr_set.all as photos %}
-                        {% if photos %}
-                            <img src="{{ photos.0.photo_book.url }}" alt="{{ book.title_rus }}" style="width:80px; height:auto;">
-                        {% else %}
-                            Нет изображения
-                        {% endif %}
-                        {% endwith %}
-                </td>
-                <td>{{ book.rating }}</td>
-                <td>{{ count }}</td>
 
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-<div style=" padding: 20px;">
-<table id="myTable" class="display" >
+<!-- Форма фильтрации -->
+<form method="get" style="margin-bottom:20px; display:flex; gap:10px; align-items:center;">
+    <input type="text" name="title" placeholder="Название книги" value="{{ query_title }}">
+    <input type="text" name="author" placeholder="Автор" value="{{ query_author }}">
+    <input type="text" name="genre" placeholder="Жанр" value="{{ query_genre }}">
+    <input type="text" name="year" placeholder="Год" value="{{ query_year }}">
+    <button type="submit" class="button_dr" style="width: 150px;">Фильтровать</button>
+    <a href="{% url 'main' %}" class="button_dr" style="width: 100px; text-decoration: none;">Сбросить</a>
+</form>
+
+<div class="table-wrapper">
+    <table class="styled-table" >
         <thead>
             <tr>
-                <th>Фото книги</th>
-                <th>Название книги</th>
+                <th>Фото</th>
+                <th>Название</th>
                 <th>Авторы</th>
-                <th>Жанры</th>
+                <th>Жанр</th>
                 <th>Год</th>
                 <th>Общее количество</th>
                 <th>Доступное количество</th>
@@ -50,7 +32,7 @@
             <tr>
                 <td>{% with book.fotoregistr_set.all as photos %}
                         {% if photos %}
-                            <img src="{{ photos.0.photo_book.url }}" alt="{{ book.title_rus }}" style="width:80px; height:auto;">
+                            <img src="{{ photos.0.photo_book.url }}" alt="{{ book.title_rus }}" >
                         {% else %}
                             Нет изображения
                         {% endif %}

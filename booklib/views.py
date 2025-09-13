@@ -3,6 +3,8 @@ from django.db import IntegrityError
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.db.models import Prefetch, F, Q
+from django.db.models.functions import Lower
 from datetime import date, datetime, timedelta
 import uuid
 import hashlib
@@ -29,11 +31,11 @@ def librarian_login_required(fn):
 
 @librarian_login_required
 def get_main_page(request):
-    '''Начальная страница.'''
+    '''Начальная страница с фильтром книг.'''
+    # Проверка на logout
     logout_response = logout_user(request)
     if logout_response:
          return logout_response
-
     spisok_rait = []
     dict_rait = {}
     date_past = date.today() - timedelta(days=90)
@@ -57,8 +59,43 @@ def get_main_page(request):
     for sp in list_books:
         sp[1] = Book.objects.filter(pk=sp[1]).first()
 
-    context = {'books': books, 'list_books': list_books}
+
+    # Фильтры из GET-параметров
+    query_title = request.GET.get('title', '').strip()
+    query_author = request.GET.get('author', '').strip()
+    query_genre = request.GET.get('genre', '').strip()
+    query_year = request.GET.get('year', '').strip()
+
+    if query_title:
+        books = books.annotate(title_lower=Lower('title_rus')).filter(
+            title_lower__contains=query_title.lower()
+        )
+    if query_author:
+        books = books.annotate(author_lower=Lower('author__name')).filter(
+            author_lower__contains=query_author.lower()
+        )
+    if query_genre:
+        books = books.annotate(genre_lower=Lower('genres__name_genre')).filter(
+            genre_lower__contains=query_genre.lower()
+        )
+    if query_year:
+        books = books.filter(year=query_year)
+
+    books = books.distinct()[:20]  # убираем дубли из-за join
+
+    context = {
+        'books': books,
+        'query_title': query_title,
+        'query_author': query_author,
+        'query_genre': query_genre,
+        'query_year': query_year,
+        'list_books': list_books,
+        'show_rating': True,  # добавляем флаг
+    }
+
     return render(request, 'main_page.html', context)
+
+
 
 @librarian_login_required
 def get_new_book(request):
@@ -185,6 +222,7 @@ def get_new_person(request):
         formP = PersonForm()
 
     context = {'formP':formP}
+
     return render(request, 'add_person.html', context)
 
 @librarian_login_required
@@ -250,7 +288,6 @@ def give_book(request):
 
     context = {'books':books, 'persons':persons, 'pre_return_date':pre_return_date_str}
     return render(request, 'give_book.html', context)
-
 
 def get_bookobj(request):
     '''Загружает физические экземпляры книги при выдаче. '''
@@ -438,6 +475,7 @@ def return_book(request):
     return render(request, 'return.html', context)
 
 
+
 def auth_user(request):
     login_form = LoginForm()
     register_form = RegisterForm()
@@ -505,74 +543,3 @@ def auth_user(request):
     return render(request, 'login.html', context)
 
 
-# def login_user(request):
-#     error = ''
-#     if request.method == 'POST':
-#         form = LoginForm(request.POST)
-#         if form.is_valid():
-#             cleaned_data = form.cleaned_data
-#             username = cleaned_data.get('username')
-#             password = cleaned_data.get('password')
-#             librarian = Librarian.objects.filter(username=username).first()
-#             def verify_password(stored_password, provided_password):
-#                 salt_hex = stored_password[:32]  # первые 32 символа — соль
-#                 hash_hex = stored_password[32:]  # остальные 64 — хеш
-#                 salt = bytes.fromhex(salt_hex)
-#                 pwd_hash = hashlib.pbkdf2_hmac('sha256', provided_password.encode(), salt, 100000)
-#                 return pwd_hash.hex() == hash_hex
-#             if librarian:
-#                 stored_password = librarian.password
-#
-#
-#                 a = verify_password(stored_password, provided_password=password)
-#                 if a:
-#                     request.session['librarian_id'] = librarian.id
-#                     return redirect('main')
-#                 else:
-#                     error = 'Введите верный пароль'
-#                     context = {'form': form, 'error': error}
-#                     return render(request, 'login.html', context)
-#             else:
-#                 error = 'Пройдите регистрацию'
-#                 context = {'form': form, 'error': error}
-#                 return render(request, 'login.html', context)
-#         else:
-#             return redirect('login')
-#     else:
-#         form = LoginForm()
-#
-#     context = {'form':form, 'error':error}
-#     return render(request, 'login.html', context)
-#
-#
-# def register_user(request):
-#     error = ''
-#     if request.method == 'POST':
-#         form = RegisterForm(request.POST)
-#         if form.is_valid():
-#             cleaned_data = form.cleaned_data
-#             username = cleaned_data.get('username')
-#             password1 = cleaned_data.get('password1')
-#             password2 = cleaned_data.get('password2')
-#
-#             librarian = Librarian.objects.filter(username=username).first()
-#             if librarian:
-#                 error = 'Пользователь с таким именем зарегистрирован'
-#                 context = {'form': form, 'error': error}
-#                 return render(request, 'register.html', context)
-#             if password1 == password2:
-#                 salt = os.urandom(16)
-#                 pwd_hash = hashlib.pbkdf2_hmac('sha256', password1.encode(), salt, 100000)
-#                 hashed = salt.hex() + pwd_hash.hex()
-#                 librarian = Librarian(username=username, password=hashed)
-#                 librarian.save()
-#                 return redirect('login')
-#             else:
-#                 error = 'Пароль не совпадает'
-#                 context = {'form': form, 'error': error}
-#                 return render(request, 'register.html', context)
-#     else:
-#         form = RegisterForm()
-#
-#     context = {'form':form, 'error': error}
-#     return render(request, 'register.html', context)
