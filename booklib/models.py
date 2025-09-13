@@ -188,7 +188,7 @@ class Order(models.Model):
     debt_order = models.DecimalField('Задолженность по выдаче', max_digits=7, decimal_places=2, null=True,blank=True)
     status_order = models.BooleanField('Наличие задолженности', default=False)
     discount = models.DecimalField('Скидка', max_digits=3, decimal_places=2, null=True,blank=True)
-    mark = models.BooleanField( default=False)
+    # mark = models.BooleanField( default=False)
 
     class Meta:
         verbose_name = 'Ордер'
