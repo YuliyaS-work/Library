@@ -34,28 +34,28 @@ def get_main_page(request):
     logout_response = logout_user(request)
     if logout_response:
          return logout_response
-    spisok_rait = []
-    dict_rait = {}
-    date_past = date.today() - timedelta(days=90)
+    # spisok_rait = []
+    # dict_rait = {}
+    # date_past = date.today() - timedelta(days=90)
     books = Book.objects.prefetch_related('bookobj_set', 'fotoregistr_set', 'author_set', 'genres').all()
+    #
+    # for book in books:
+    #     bookobjs = book.bookobj_set.all()
+    #     counter = 0
+    #     for bookobj in bookobjs:
+    #         count_order = bookobj.order_set.filter(distrib_date__gte=date_past).all()
+    #         length = len(list(count_order))
+    #         counter += length
+    #     dict_rait[counter] = book.id
 
-    for book in books:
-        bookobjs = book.bookobj_set.all()
-        counter = 0
-        for bookobj in bookobjs:
-            count_order = bookobj.order_set.filter(distrib_date__gte=date_past).all()
-            length = len(list(count_order))
-            counter += length
-        dict_rait[counter] = book.id
-
-    for i, j in dict_rait.items():
-        spisok_rait.append([i, j])
-    spisok_rait.sort()
-    spisok_rait.reverse()
-
-    list_books = spisok_rait[:3]
-    for sp in list_books:
-        sp[1] = Book.objects.filter(pk=sp[1]).first()
+    # for i, j in dict_rait.items():
+    #     spisok_rait.append([i, j])
+    # spisok_rait.sort()
+    # spisok_rait.reverse()
+    #
+    # list_books = spisok_rait[:3]
+    # for sp in list_books:
+    #     sp[1] = Book.objects.filter(pk=sp[1]).first()
 
 
     # Фильтры из GET-параметров
@@ -68,7 +68,6 @@ def get_main_page(request):
         books = books.annotate(title_lower=Lower('title_rus')).filter(
             title_lower__contains=query_title.lower()
         )
-        # books = books.filter(title_rus__icontains=query_title)
     if query_author:
         books = books.annotate(author_lower=Lower('author__name')).filter(
             author_lower__contains=query_author.lower()
@@ -88,8 +87,8 @@ def get_main_page(request):
         'query_author': query_author,
         'query_genre': query_genre,
         'query_year': query_year,
-        'list_books': list_books,
-        'show_rating': True,  # добавляем флаг
+        # 'list_books': list_books,
+        # 'show_rating': True,  # добавляем флаг
     }
 
     return render(request, 'main_page.html', context)

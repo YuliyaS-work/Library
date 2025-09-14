@@ -1,9 +1,9 @@
 /* Общие стили */
 body {
     margin: 0;
-    font-family: 'Palatino', sans-serif;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
     /* фон */
-    background-image: url('/static/image/2.jpg'); /* путь к изображению */
+    background-image: url('/static/image/4.jpg'); /* путь к изображению */
     background-size: cover;        /* растягиваем на всю страницу */
     background-repeat: no-repeat;  /* без повторения */
     background-attachment: fixed;  /* фон фиксация*/
@@ -16,7 +16,7 @@ body {
     padding: 12px 20px;
     color: white;
     text-align: center;
-    font-family: 'Palatino', sans-serif;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
     font-size: 15px;
     cursor: pointer;
     border: none;
@@ -31,7 +31,7 @@ body {
 /* Шапка */
 header {
     width: 100%;
-    background-color: #D4D5CF;
+    background-color: #D5D6D0;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -78,7 +78,7 @@ header a {
     padding: 12px 20px;
     color: white;
     text-align: center;
-    font-family: 'Palatino', sans-serif;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
     font-size: 15px;
     cursor: pointer;
     border: none;
@@ -149,6 +149,9 @@ table.styled-table td {
 /* Полосатые строки */
 table.styled-table tbody tr:nth-child(even) {
     background-color: #f1f1f1; /* чуть темнее */
+}
+table.styled-table tbody tr:nth-child(odd) {
+    background-color: rgba(255, 255, 255, 0.4); /* белый с небольшой прозрачностью */
 }
 
 /* Hover эффект */
@@ -320,7 +323,7 @@ table.styled-table tbody tr:hover {
     padding: 12px 20px;
     color: white;
     text-align: center;
-    font-family: 'Palatino', sans-serif;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
     font-size: 15px;
     cursor: pointer;
     border: none;
@@ -476,16 +479,46 @@ table.styled-table tbody tr:hover {
 }
 
 
+/* страница выдачи */
+/* Контейнер двух форм */
+.forms-wrapper-give {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+    align-items: flex-start; /* выравниваем по верхнему краю */
+    flex-wrap: nowrap;       /* запрещаем перенос форм */
+}
 
-.person-container {
-   flex: 1;             /* занимает всё доступное пространство */
-    max-width: 400px;
-    padding: 20px;
-    margin-top: 30px;
+/* Левая форма — выдача книги */
+.forms-wrapper-give .form-container-give {
+    flex: 1 1 550px; /* занимает доступное место */
+    min-width: 550px; /* минимальная ширина, чтобы форма не сжималась */
+}
+
+/* Правая форма — проверка читателя */
+.forms-wrapper-give .person-container {
+    flex: 0 0 300px; /* фиксированная ширина */
+    min-width: 300px;
+    margin-top: 0;
     background-color: rgba(255, 255, 255, 0.85);
-    border-radius: 10px;
+    padding: 20px;
+    border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 10px;
+}
+
+/* Адаптив для экранов меньше 900px */
+@media screen and (max-width: 900px) {
+    .forms-wrapper-give {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .form-container-give,
+    .person-container {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
 }

@@ -4,6 +4,7 @@
 {% block title %}Выдача книги{% endblock %}
 
 {% block content %}
+<div class="forms-wrapper-give">
 <div class="form-container-give">
 <form  action="#toast" method="POST">
     {% csrf_token %}
@@ -60,7 +61,7 @@
 </div>
 
 <div class="person-container">
-    <label for="person_data">ФИО</label>
+    <label for="person_data">ФИО читателя</label>
     <select id="person_data" name="person_data">
         <option value="">--Выберите читателя--</option>
         {% for person in persons_all %}
@@ -69,7 +70,7 @@
     </select>
     <div id="person_info"></div>
 </div>
-
+</div>
 
 <script src="{% static 'js/formO.js' %}" defer></script>
 <script> const getBookObjUrl = "{% url 'get_bookobj' %}"; </script>

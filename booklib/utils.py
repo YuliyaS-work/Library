@@ -33,10 +33,10 @@ def send_debt_email():
                     if bb not in rbooks1:
                         bookobjs1.append(bb)
                 books_data = [(bookobj.book.title_rus, f" номер {bookobj.registr_number}") for bookobj in bookobjs1]
-                data_books.append({"Выдача":order, "Книги":books_data})
+                data_books.append(f"Выдача номер {order.id}, книги: {books_data}")
                 print(data_books)
         if data_books:
-            subject = 'Debt'
+            subject = 'Библиотека'
             message = (f'Здравствуйте, {person.first_name} {person.surname}! Истек срок выдачи книг. Не забудьте, пожалуйста, вернуть книги {data_books} и оплатить.')
             print(message)
             recipient_list = ['by-40yuliya@yandex.by']
