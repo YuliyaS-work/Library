@@ -68,6 +68,7 @@ def get_main_page(request):
         books = books.annotate(title_lower=Lower('title_rus')).filter(
             title_lower__contains=query_title.lower()
         )
+        # books = books.filter(title_rus__icontains=query_title)
     if query_author:
         books = books.annotate(author_lower=Lower('author__name')).filter(
             author_lower__contains=query_author.lower()
