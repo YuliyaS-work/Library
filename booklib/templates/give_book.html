@@ -59,7 +59,22 @@
 <div id="toast" class="toast">Выдача зарегистрирована</div>
 </div>
 
+<div class="person-container">
+    <label for="person_data">ФИО</label>
+    <select id="person_data" name="person_data">
+        <option value="">--Выберите читателя--</option>
+        {% for person in persons_all %}
+        <option value="{{person.id}}">{{ person.last_name }} {{ person.first_name }} {{ person.surname }}</option>
+        {% endfor %}
+    </select>
+    <div id="person_info"></div>
+</div>
+
 
 <script src="{% static 'js/formO.js' %}" defer></script>
 <script> const getBookObjUrl = "{% url 'get_bookobj' %}"; </script>
+
+<script src="{% static 'js/person_data.js' %}" defer></script>
+<script>const getDataUrl = "{% url 'get_data' %}";</script>
+
 {% endblock %}

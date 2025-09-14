@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import get_main_page, get_new_book, get_new_person, give_book, get_bookobj, return_book, auth_user
+from .views import get_main_page, get_new_book, get_new_person, give_book, get_bookobj, return_book, auth_user, get_data_person
 
 urlpatterns = [
     path('', get_main_page, name='main'),
@@ -10,4 +10,6 @@ urlpatterns = [
     path('give_book/get_bookobj/', get_bookobj, name='get_bookobj'),
     path('return_book/', return_book, name = 'return_book'),
     path('login/', auth_user, name='login'),
+    # path('person/', get_person_data, name='person_data'),
+    path('give_book/get_data_person/', get_data_person, name='get_data'),
 ]

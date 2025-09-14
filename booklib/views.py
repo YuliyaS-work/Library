@@ -1,4 +1,3 @@
-from django.urls import reverse
 from django.db import IntegrityError
 from django.db.models import Sum
 from django.http import JsonResponse
@@ -11,7 +10,6 @@ import hashlib
 import os
 from .forms import LoginForm, RegisterForm
 from .models import Librarian
-from functools import wraps
 from .forms import PersonForm, BookForm, GenreForm, ReturnForm1, ReturnForm2
 from .models import Book, BookObj, FotoRegistr, Author, Order, Person, ReturnB, FotoStatus
 
@@ -179,9 +177,10 @@ def get_new_book(request):
                         author_spisok_name = [name_author1, name_author2, name_author3]
                         author_spisok_photo = [photo_author1, photo_author2, photo_author3]
                         for index, author in enumerate(author_spisok_name):
-                            author_q, created = Author.objects.update_or_create(name=author,
+                            if author != '':
+                                author_q, created = Author.objects.update_or_create(name=author,
                                                                         defaults={'photo_author': author_spisok_photo[index]})
-                            author_spisok.append(author_q)
+                                author_spisok.append(author_q)
                         book.author_set.set(author_spisok)
 
 
@@ -232,11 +231,15 @@ def give_book(request):
     logout_response = logout_user(request)
     if logout_response:
         return logout_response
-
+    # для инфы по читателям
+    persons_all = Person.objects.prefetch_related('order_set').all()
+    # для выдачи
     books = Book.objects.filter(current_quantity__gt=0)
     persons = Person.objects.filter(quantity_books__lt=5)
     pre_return_date = date.today() + timedelta(days=30)
     pre_return_date_str = pre_return_date.strftime('%Y-%m-%d')
+
+
     if request.method == 'POST':
         logout_user(request)
         person_id = request.POST.get('person')
@@ -286,7 +289,7 @@ def give_book(request):
         person.get_debt()
         person.save(update_fields=['debt'])
 
-    context = {'books':books, 'persons':persons, 'pre_return_date':pre_return_date_str}
+    context = {'books':books, 'persons':persons, 'pre_return_date':pre_return_date_str, 'persons_all': persons_all}
     return render(request, 'give_book.html', context)
 
 def get_bookobj(request):
@@ -300,6 +303,43 @@ def get_bookobj(request):
             "price_per_day": float(obj.current_day_price)
         })
     return JsonResponse(data, safe=False)
+
+
+def get_data_person(request):
+    '''Выдается информация по читателям'''
+    person_id = request.POST.get('person_data')
+    orders = Order.objects.filter(person_id=person_id, status_order=1)
+    person = Person.objects.get(pk=person_id)
+    data_person = {
+        "date_of_birth":person.date_of_birth,
+        "address": person.address,
+        "mail": person.mail,
+        "quantity_books": person.quantity_books,
+        "debt": person.debt,
+        "orders": []
+    }
+    for order in orders:
+        returnbs = order.returnb_set.all()
+        rbooks1 = []
+        bookobjs1 = []
+        for returnb in returnbs:
+            rbooks2 = list(returnb.bookobj_set.all())
+            rbooks1.extend(rbooks2)
+            print(rbooks1)
+        bookobjs = list(order.book_obj.all())
+        print(bookobjs)
+        for bb in bookobjs:
+            if bb  not in rbooks1:
+                bookobjs1.append(bb)
+        print(bookobjs1)
+        books_data = [(bookobj.book.title_rus,f" номер {bookobj.registr_number}") for bookobj in bookobjs1]
+        data_person["orders"].append({
+            "order_id": order.id,
+            "books": books_data
+        })
+    print(data_person)
+    return JsonResponse(data_person, safe=False)
+
 
 @librarian_login_required
 def return_book(request):
