@@ -8,7 +8,7 @@
 <div class="form-container-give">
 <form  action="#toast" method="POST">
     {% csrf_token %}
-    <div class="form-row">
+    <div class="form-row-person">
     <label for="person">Читатель</label>
     <select id="person" name="person">
         {% for person in persons %}
@@ -18,7 +18,7 @@
     </div>
 
     {% for i in "12345" %}
-    <div class="form-row">
+    <div class="form-row-book">
         <label for="book_{{ i }}">Книга{{ i }}</label>
         <select id="book_{{ i }}" name="book_{{ i }}" class="book-select">
             <option value="">--Выберите книгу--</option>

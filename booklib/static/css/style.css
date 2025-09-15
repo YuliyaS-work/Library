@@ -27,7 +27,6 @@ body {
     background-color: #659DBD;
     transform: scale(1.05);
 }
-
 /* Шапка */
 header {
     width: 100%;
@@ -36,15 +35,12 @@ header {
     justify-content: center;
     align-items: center;
     height: 200px;
-
     position: fixed;   /* фиксируем */
     top: 0;            /* прижимаем к верху */
     left: 0;
     z-index: 1000;     /* поверх всего остального */
 }
-header a {
-    display: inline-block; /* чтобы ссылка оборачивала лого корректно */
-}
+header a {display: inline-block;} /* чтобы ссылка оборачивала лого корректно */
 .logo {
     display: block;
     max-height: 100%;
@@ -61,16 +57,13 @@ header a {
     margin-top: 200px;       /* чтобы учесть фиксированный header */
     padding: 20px;
 }
-
 /* Кнопки слева */
 .button_container {
     flex: 0 0 200px;            /* фиксированная ширина меню */
     display: flex;
     flex-direction: column;
     gap: 10px;
-
 }
-
 .button_container .button-link,
 .button_container form button {
     width: 100%;
@@ -92,25 +85,16 @@ header a {
     background-color: #659DBD;
     transform: scale(1.05);
 }
-.button_container form button {
-    background-color: #c94c4c;
-}
-.button_container form button:hover {
-    background-color: #e06b6b;
-}
-
+.button_container form button {background-color: #c94c4c;}
+.button_container form button:hover {background-color: #e06b6b;}
 /*  Контент справа  */
-.main-content {
-    flex: 1;
-    min-width: 0;
-}
+.main-content {flex: 1; min-width: 0;}
 .table-wrapper {
     max-height: 500px;   /* фиксируем высоту области */
     overflow-y: auto;    /* вертикальная прокрутка */
     overflow-x: auto;    /* горизонтальная прокрутка при узких экранах */
     border-radius: 10px;
 }
-
 /* Таблица */
 table.styled-table {
     width: 100%;
@@ -125,39 +109,27 @@ table.styled-table thead tr {
     color: white;
     font-weight: bold;
 }
-
 /* Заголовки  */
 table.styled-table th {
     text-align: center;
     vertical-align: middle;
     padding: 12px 15px;
-    /* фиксируем заголовок */
-    position: sticky;
+    position: sticky;    /* фиксируем заголовок */
     top: 0;
     z-index: 2;
     background: linear-gradient(180deg, #2C4058 0%, #557A95 70%, #96B0D6 100%);
     color: white;
 }
-
 /* Ячейки таблицы  */
 table.styled-table td {
     text-align: center;
     vertical-align: middle;
     padding: 12px 15px;
 }
-
 /* Полосатые строки */
-table.styled-table tbody tr:nth-child(even) {
-    background-color: #f1f1f1; /* чуть темнее */
-}
-table.styled-table tbody tr:nth-child(odd) {
-    background-color: rgba(255, 255, 255, 0.4); /* белый с небольшой прозрачностью */
-}
-
-/* Hover эффект */
-table.styled-table tbody tr:hover {
-    background-color: #e5e5e5;
-}
+table.styled-table tbody tr:nth-child(even) {background-color: #f1f1f1;}
+table.styled-table tbody tr:nth-child(odd) {background-color: rgba(255, 255, 255, 0.4);}
+table.styled-table tbody tr:hover {background-color: #e5e5e5;} /* Hover эффект */
 
 /* Картинки в таблице */
 .styled-table img {
@@ -172,10 +144,7 @@ table.styled-table tbody tr:hover {
 
 /* Адаптив */
 @media screen and (max-width: 1024px) {
-    .content {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+    .content {flex-direction: column; align-items: flex-start;}
      /* Боковая панель */
     .sidebar {
         flex-direction: column;  /* кнопки и рейтинг вертикально */
@@ -197,19 +166,16 @@ table.styled-table tbody tr:hover {
         flex-direction: column;  /* рейтинг вертикально под кнопками */
         gap: 15px;
     }
-
     .main-content {
         width: 100%;
         margin-top: 20px;  /* небольшой отступ сверху */
     }
-
     .rating-item {
         width: 100%; /* чтобы не налезало на кнопки */
         flex-direction: row;
         align-items: center;
         justify-content: flex-start;
     }
-
     .rating-photo {
         margin-right: 10px;
     }
@@ -224,14 +190,12 @@ table.styled-table tbody tr:hover {
         gap: 10px;
         width: 100%;
     }
-
     .button_container .button-link,
     .button_container form button {
         flex: 0 0 48%;             /* две колонки с небольшим отступом */
         max-width: 48%;
         margin-bottom: 10px;
     }
-
     .rating-list {
         display: flex;
         flex-direction: column;    /* рейтинг вертикально */
@@ -241,7 +205,6 @@ table.styled-table tbody tr:hover {
         margin: 0 auto;            /* центрируем */
         gap: 15px;
     }
-
     .rating-item {
         width: 100%;               /* занимают всю ширину рейтинга */
         flex-direction: row;
@@ -249,13 +212,12 @@ table.styled-table tbody tr:hover {
         justify-content: flex-start;
         text-align: left;
     }
-
     .rating-photo {
         margin-right: 10px;
         margin-bottom: 0;
     }
 }
-/* Сообщения */
+/* Всплывающие сообщения!!! */
 .toast {
   position: fixed;
   top: 50%;
@@ -272,9 +234,7 @@ table.styled-table tbody tr:hover {
   font-size: 18px;
   z-index: 999;
 }
-#toast:target {
-  animation: popupToast 3s forwards;
-}
+#toast:target {animation: popupToast 3s forwards;}
 @keyframes popupToast {
   0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
   10%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -282,16 +242,10 @@ table.styled-table tbody tr:hover {
   100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
 }
 
-.errorlist {
-  color: red;
-}
-/* контейнер формы жанра */
-.forms-wrapper {
-    display: flex;
-    gap: 40px;           /* расстояние между формами */
-    align-items: flex-start;
-}
-/* Форма книги */
+.errorlist {color: red;}
+
+
+/* Форма книги!!! */
 .form-container-book {
     flex: 1;             /* занимает всё доступное пространство */
     max-width: 470px;
@@ -304,7 +258,7 @@ table.styled-table tbody tr:hover {
     gap: 6px;            /* расстояние между полями */
 }
 
-/* Форма жанра — компактная */
+/* Форма жанра !!!! */
 .form-container-genre {
     flex: 0 0 250px;                     /* фиксированная ширина */
     padding: 15px;
@@ -315,8 +269,6 @@ table.styled-table tbody tr:hover {
     flex-direction: column;
     gap: 4px;                 /* расстояние между полями */
 }
-
-
 .button_genre {
     width:  200px;
     background-color: #557A95;
@@ -334,7 +286,6 @@ table.styled-table tbody tr:hover {
     background-color: #659DBD;
     transform: scale(1.05);
 }
-
 /* Поля внутри формы жанра */
 .form-container-genre input[type="text"],
 .form-container-genre select,
@@ -348,8 +299,15 @@ table.styled-table tbody tr:hover {
 }
 .form-container-genre p {margin-bottom: 0;}
 .form-container-genre p input {margin-top: 0; margin-bottom: 10px;}
+/* контейнер формы жанра */
+.forms-wrapper {
+    display: flex;
+    gap: 40px;           /* расстояние между формами */
+    align-items: flex-start;
+}
 
-/* Форма регистрации читателя  */
+
+/* Форма регистрации читателя!!!  */
 .form-container {
     flex: 1;                  /* форма занимает всё доступное место справа */
     max-width: 400px;
@@ -361,8 +319,7 @@ table.styled-table tbody tr:hover {
     flex-direction: column;
     gap: 6px;
 }
-
-/* Стили для */
+/* Стили для полей регистрации читателя*/
 .form-container input[type="text"],
 .form-container input[type="email"],
 .form-container input[type="password"],
@@ -378,45 +335,10 @@ table.styled-table tbody tr:hover {
     font-size: 14px;
     box-sizing: border-box;
 }
+.form-container input[type="file"] {padding: 5px;}
 
-.form-container input[type="file"] {
-    padding: 5px;
-}
-.form-container-give{
-    max-width: 800px;
-    padding: 15px;
-    background-color: rgba(255, 255, 255, 0.85);
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
 
-.form-row {
-    display: flex;
-    align-items: center;  /* выравнивание по вертикали */
-    gap: 10px;            /* расстояние между label и select */
-    margin-bottom: 8px;   /* расстояние до следующей строки */
-}
-
-.form-row label {
-    width: 180px;         /* фиксированная ширина для всех label */
-    text-align: right;
-}
-
-.form-row select,
-.form-row input {
-    flex: 1;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-    box-sizing: border-box;
-}
-.form-row.small-input input {
-    flex: 0 0 25%;
-}
+/* Страница бэсик для рейтинга!!! */
 /* Боковая панель слева */
 .sidebar {
     flex: 0 0 220px;         /* фиксированная ширина */
@@ -424,14 +346,12 @@ table.styled-table tbody tr:hover {
     flex-direction: column;
     gap: 20px;
 }
-
 /* Кнопки */
 .button_container {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
-
 /* Рейтинг под кнопками */
 .rating-list {
     display: flex;
@@ -448,7 +368,6 @@ table.styled-table tbody tr:hover {
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     width: 90%; /* чтобы не растягивалось за пределы sidebar */
 }
-
 .rating-photo {
     width: 70px;
     height: auto;
@@ -479,22 +398,20 @@ table.styled-table tbody tr:hover {
 }
 
 
-/* страница выдачи */
+/* начинается страница выдачи!!!!! */
 /* Контейнер двух форм */
 .forms-wrapper-give {
     display: flex;
     gap: 30px;
-    margin-top: 20px;
+    margin-top: 0;
     align-items: flex-start; /* выравниваем по верхнему краю */
     flex-wrap: nowrap;       /* запрещаем перенос форм */
 }
-
 /* Левая форма — выдача книги */
 .forms-wrapper-give .form-container-give {
     flex: 1 1 550px; /* занимает доступное место */
     min-width: 550px; /* минимальная ширина, чтобы форма не сжималась */
 }
-
 /* Правая форма — проверка читателя */
 .forms-wrapper-give .person-container {
     flex: 0 0 300px; /* фиксированная ширина */
@@ -508,17 +425,87 @@ table.styled-table tbody tr:hover {
     flex-direction: column;
     gap: 10px;
 }
-
 /* Адаптив для экранов меньше 900px */
 @media screen and (max-width: 900px) {
-    .forms-wrapper-give {
-        flex-direction: column;
-        gap: 20px;
-    }
-
+    .forms-wrapper-give {flex-direction: column; gap: 20px;}
     .form-container-give,
-    .person-container {
-        flex: 1 1 100%;
-        max-width: 100%;
-    }
+    .person-container {flex: 1 1 100%; max-width: 100%;}
+}
+/* Выдача для читателя */
+.form-row-person {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 6px;
+    background-color: rgba(255, 255, 255, 0.9); /* светлый фон */
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.form-row-person label {width: 100px;}
+.form-row-person select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    font-size: 14px;
+}
+/* количество книг, скидка, дата, стоимость */
+.form-row.small-input {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-bottom: 3px;
+}
+.form-row.small-input label {width: 250px; text-align: left;}
+.form-row.small-input input {
+    width: 120px;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+/* строки где выбор книги и рег номера */
+.form-row-book {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.form-row-book:hover {
+    transform: scale(1.01);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.form-row-book label {
+    width: auto;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    color: #2C4058;
+}
+.form-row-book select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    font-size: 14px;
+}
+/* Сама форма выдачи */
+.form-container-give {
+    max-width: 800px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
