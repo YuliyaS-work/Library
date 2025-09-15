@@ -1,4 +1,5 @@
 # для проверки работы строка 23, иначе 23 удалить, 11 раскомментить
+# 42-43 почтовый ящик мой для проверки работы
 
 from datetime import datetime
 from django.core.mail import send_mail
@@ -40,6 +41,7 @@ def send_debt_email():
             message = (f'Здравствуйте, {person.first_name} {person.surname}! Истек срок выдачи книг. Не забудьте, пожалуйста, вернуть книги {data_books} и оплатить.')
             print(message)
             recipient_list = ['by-40yuliya@yandex.by']
+            # recipient_list = [f'{person.mail}']
 
             try:
                 send_mail(subject, message, None, recipient_list=recipient_list, fail_silently=False)
