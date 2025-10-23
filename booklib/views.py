@@ -4,10 +4,12 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.db.models import Prefetch, F, Q
 from django.db.models.functions import Lower
+
 from datetime import date, datetime, timedelta
 import uuid
 import hashlib
 import os
+
 from .forms import LoginForm, RegisterForm
 from .models import Librarian
 from .forms import PersonForm, BookForm, GenreForm, ReturnForm1, ReturnForm2
