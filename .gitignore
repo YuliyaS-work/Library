@@ -167,3 +167,4 @@ media/foto
 
 celerybeat-schedule.db
 
+Dockerfile

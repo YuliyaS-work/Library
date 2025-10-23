@@ -40,24 +40,6 @@ def get_main_page(request):
     # dict_rait = {}
     # date_past = date.today() - timedelta(days=90)
     books = Book.objects.prefetch_related('bookobj_set', 'fotoregistr_set', 'author_set', 'genres').all()
-    #
-    # for book in books:
-    #     bookobjs = book.bookobj_set.all()
-    #     counter = 0
-    #     for bookobj in bookobjs:
-    #         count_order = bookobj.order_set.filter(distrib_date__gte=date_past).all()
-    #         length = len(list(count_order))
-    #         counter += length
-    #     dict_rait[counter] = book.id
-
-    # for i, j in dict_rait.items():
-    #     spisok_rait.append([i, j])
-    # spisok_rait.sort()
-    # spisok_rait.reverse()
-    #
-    # list_books = spisok_rait[:3]
-    # for sp in list_books:
-    #     sp[1] = Book.objects.filter(pk=sp[1]).first()
 
 
     # Фильтры из GET-параметров
